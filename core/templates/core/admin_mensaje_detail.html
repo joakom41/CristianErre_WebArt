@@ -1,0 +1,80 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Detalle del Mensaje | Admin{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-stone-50 py-8">
+    <div class="max-w-4xl mx-auto px-4">
+
+        <!-- Encabezado -->
+        <div class="mb-8">
+            <a href="{% url 'admin_mensajes' %}" class="text-stone-600 hover:text-stone-900 mb-4 inline-block">
+                ← Volver a mensajes
+            </a>
+            <h1 class="text-4xl font-display font-bold text-stone-900 mb-2">Detalle del Mensaje</h1>
+        </div>
+
+        <!-- Contenido del mensaje -->
+        <div class="bg-white rounded-2xl shadow-soft p-8 space-y-6">
+
+            <!-- Información del remitente -->
+            <div class="border-b border-stone-200 pb-6">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-sm font-medium text-stone-700">Nombre</label>
+                        <p class="text-lg text-stone-900">{{ mensaje.nombre }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-stone-700">Email</label>
+                        <p class="text-lg text-stone-900">{{ mensaje.email }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asunto -->
+            <div>
+                <label class="text-sm font-medium text-stone-700">Asunto</label>
+                <p class="text-xl font-display text-stone-900">{{ mensaje.asunto }}</p>
+            </div>
+
+            <!-- Mensaje -->
+            <div>
+                <label class="text-sm font-medium text-stone-700">Mensaje</label>
+                <p class="text-stone-900 leading-relaxed whitespace-pre-wrap">{{ mensaje.mensaje }}</p>
+            </div>
+
+            <!-- Fecha -->
+            <div>
+                <label class="text-sm font-medium text-stone-700">Fecha de envío</label>
+                <p class="text-stone-900">{{ mensaje.fecha_envio|date:"d/m/Y H:i" }}</p>
+            </div>
+
+            <!-- Respuesta (si existe) -->
+            {% if mensaje.respondido %}
+            <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-6">
+                <label class="text-sm font-medium text-emerald-700">Respuesta enviada</label>
+                <p class="text-emerald-900 leading-relaxed whitespace-pre-wrap mt-2">{{ mensaje.respuesta }}</p>
+                <p class="text-sm text-emerald-600 mt-2">Respondido el {{ mensaje.fecha_respuesta|date:"d/m/Y H:i" }}
+                </p>
+            </div>
+            {% endif %}
+
+            <!-- Acciones -->
+            <div class="flex gap-4 pt-6 border-t border-stone-200">
+                {% if not mensaje.respondido %}
+                <a href="{% url 'admin_mensaje_respond' mensaje.id %}"
+                    class="flex-1 bg-emerald-600 text-white text-center py-3 rounded-lg font-medium hover:bg-emerald-700 transition duration-300">
+                    Responder Mensaje
+                </a>
+                {% endif %}
+                <a href="{% url 'admin_mensaje_archive' mensaje.id %}"
+                    class="flex-1 bg-stone-100 text-stone-900 text-center py-3 rounded-lg font-medium hover:bg-stone-200 transition duration-300">
+                    {% if mensaje.archivado %}Desarchivar{% else %}Archivar{% endif %}
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}

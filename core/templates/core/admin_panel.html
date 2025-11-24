@@ -1,0 +1,122 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Panel de Administración | Cristian Erre{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-stone-50 py-8">
+    <div class="max-w-7xl mx-auto px-4">
+
+        <!-- Encabezado -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-display font-bold text-stone-900 mb-2">Panel de Administración</h1>
+            <p class="text-stone-600">Bienvenido, {{ user.first_name }}. Gestiona tu galería desde aquí.</p>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Obras -->
+            <div class="bg-white rounded-2xl shadow-soft p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-stone-600 text-sm mb-1">Total Obras</p>
+                        <p class="text-3xl font-bold text-stone-900">{{ total_obras }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disponibles -->
+            <div class="bg-white rounded-2xl shadow-soft p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-stone-600 text-sm mb-1">Disponibles</p>
+                        <p class="text-3xl font-bold text-emerald-600">{{ obras_disponibles }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vendidas -->
+            <div class="bg-white rounded-2xl shadow-soft p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-stone-600 text-sm mb-1">Vendidas</p>
+                        <p class="text-3xl font-bold text-rose-600">{{ obras_vendidas }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensajes Nuevos -->
+            <div class="bg-white rounded-2xl shadow-soft p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-stone-600 text-sm mb-1">Mensajes Nuevos</p>
+                        <p class="text-3xl font-bold text-blue-600">{{ mensajes_nuevos }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Gestión de Obras -->
+            <div class="bg-white rounded-2xl shadow-soft p-8">
+                <h2 class="text-2xl font-display font-bold text-stone-900 mb-4">Gestión de Obras</h2>
+                <p class="text-stone-600 mb-6">Administra tu catálogo de arte</p>
+                <div class="space-y-3">
+                    <a href="{% url 'admin_obras' %}"
+                        class="block w-full bg-stone-900 text-white text-center py-3 rounded-lg font-medium hover:bg-stone-800 transition duration-300">
+                        Ver Todas las Obras
+                    </a>
+                    <a href="{% url 'admin_obra_create' %}"
+                        class="block w-full bg-stone-100 text-stone-900 text-center py-3 rounded-lg font-medium hover:bg-stone-200 transition duration-300">
+                        Agregar Nueva Obra
+                    </a>
+                </div>
+            </div>
+
+            <!-- Gestión de Mensajes -->
+            <div class="bg-white rounded-2xl shadow-soft p-8">
+                <h2 class="text-2xl font-display font-bold text-stone-900 mb-4">Mensajes de Contacto</h2>
+                <p class="text-stone-600 mb-6">Revisa y responde mensajes</p>
+                <div class="space-y-3">
+                    <a href="{% url 'admin_mensajes' %}"
+                        class="block w-full bg-stone-900 text-white text-center py-3 rounded-lg font-medium hover:bg-stone-800 transition duration-300">
+                        Ver Todos los Mensajes
+                    </a>
+                    <a href="{% url 'admin_mensajes' %}?filtro=nuevos"
+                        class="block w-full bg-blue-100 text-blue-900 text-center py-3 rounded-lg font-medium hover:bg-blue-200 transition duration-300">
+                        Ver Mensajes Nuevos ({{ mensajes_nuevos }})
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

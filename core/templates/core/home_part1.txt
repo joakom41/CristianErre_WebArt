@@ -1,0 +1,106 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Cristian Erre - Artista Visual{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION - MÁS ARRIBA -->
+<section class="min-h-screen flex flex-col items-center justify-center pt-24 md:pt-16 px-4 relative overflow-hidden">
+    <!-- Logo circular MÁS GRANDE con imagen de Cristian Erre -->
+    <div class="w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 rounded-full overflow-hidden mb-8 border-4 border-white shadow-2xl relative z-10 animate-scale-in">
+        <img src="https://i.imgur.com/LNGNwBa.png" alt="Cristian Erre Logo" class="w-full h-full object-cover">
+    </div>
+
+    <!-- Título y descripción -->
+    <div class="text-center max-w-4xl z-10 animate-fade-in">
+        <h1 class="font-display text-5xl md:text-7xl lg:text-8xl text-stone-900 mb-6 tracking-tight leading-tight">
+            Bienvenido al Arte de <span class="italic">Cristian Erre</span>
+        </h1>
+        <p class="text-stone-500 text-lg md:text-xl font-light tracking-wide max-w-2xl mx-auto leading-relaxed">
+            Exploración visual a través del óleo, la ilustración y el muralismo en un lenguaje propio y contemporáneo.
+        </p>
+    </div>
+
+    <!-- Flecha animada -->
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+        <svg class="w-6 h-6 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+        </svg>
+    </div>
+
+    <!-- Elementos decorativos de fondo -->
+    <div class="absolute top-1/4 left-10 w-64 h-64 bg-stone-100 rounded-full blur-3xl -z-0 opacity-50"></div>
+    <div class="absolute bottom-1/4 right-10 w-96 h-96 bg-stone-50 rounded-full blur-3xl -z-0 opacity-50"></div>
+</section>
+
+<!-- EXPOSICIÓN HISTÓRICA - ANCHO COMPLETO -->
+<section id="history" class="py-24 bg-stone-900 text-stone-50 overflow-hidden w-full">
+    <!-- Encabezado con padding -->
+    <div class="px-6 md:px-12 lg:px-16 mb-16">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-baseline justify-between gap-8 border-b border-white/20 pb-8 animate-slide-up">
+            <h2 class="font-display text-4xl md:text-6xl italic">Exposición Histórica</h2>
+            <p class="text-stone-400 max-w-md text-sm md:text-base leading-relaxed">
+                Obras muralistas y piezas vendidas que forman parte del legado permanente del artista en espacios públicos y privados.
+            </p>
+        </div>
+    </div>
+
+    <!-- Carrusel ANCHO COMPLETO -->
+    <div class="relative w-full">
+        <!-- Contenedor del carrusel -->
+        <div id="historicalCarousel" class="overflow-hidden w-full">
+            <div id="carouselTrack" class="flex transition-transform duration-500 ease-out px-6 md:px-12 lg:px-16 gap-8">
+                {% for obra in obras_historicas %}
+                <div class="group relative min-w-[85vw] md:min-w-[70vw] lg:min-w-[60vw] flex-shrink-0 cursor-pointer obra-card" data-obra-id="{{ obra.id }}">
+                    <!-- Imagen más grande -->
+                    <div class="relative aspect-[16/10] md:aspect-[21/9] overflow-hidden rounded-lg mb-6 shadow-2xl">
+                        <img src="{{ obra.imagen_url }}" alt="{{ obra.titulo }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent group-hover:from-black/40 transition-all duration-500"></div>
+                        
+                        <!-- Información superpuesta -->
+                        <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <h3 class="font-display text-3xl md:text-4xl mb-2 text-white">{{ obra.titulo }}</h3>
+                                    <p class="text-stone-300 text-base md:text-lg">{{ obra.get_categoria_display }}</p>
+                                </div>
+                                <span class="font-mono text-sm md:text-base text-white bg-white/20 backdrop-blur-sm border border-white/30 px-4 py-2 rounded-full">
+                                    {% if obra.estado == 'VENDIDO' %}Vendido{% else %}{{ obra.get_estado_display }}{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-stone-400 text-center w-full py-12">
+                    No hay obras históricas disponibles
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Barra de navegación del carrusel -->
+        {% if obras_historicas %}
+        <div class="flex items-center justify-center gap-6 mt-12">
+            <button onclick="prevSlide()" class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition backdrop-blur-sm border border-white/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+            
+            <div class="flex gap-3">
+                {% for obra in obras_historicas %}
+                <button onclick="goToSlide({{ forloop.counter0 }})" class="carousel-dot w-3 h-3 rounded-full bg-white/30 hover:bg-white/50 transition {% if forloop.first %}!bg-white{% endif %}"></button>
+                {% endfor %}
+            </div>
+
+            <button onclick="nextSlide()" class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition backdrop-blur-sm border border-white/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</section>

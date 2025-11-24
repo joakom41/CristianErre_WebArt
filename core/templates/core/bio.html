@@ -1,0 +1,70 @@
+{% extends 'core/base.html' %}
+
+{% block title %}El Artista (Bio) | Cristian Erre{% endblock %}
+
+{% block content %}
+
+<!-- TÍTULO DE SECCIÓN -->
+<div class="text-center mb-12 lg:mb-16 animate-fade-in">
+    <h1 class="text-4xl lg:text-5xl font-display font-semibold text-stone-900 mb-4">
+        Cristian Erre
+    </h1>
+    <p class="text-stone-600 text-lg">Bio y Trayectoria</p>
+</div>
+
+<!-- LAYOUT BIO -->
+<div class="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start max-w-6xl mx-auto">
+
+    <!-- IMAGEN DEL ARTISTA -->
+    <div class="w-full lg:w-2/5 flex-shrink-0">
+        <div class="relative group">
+            <img src="https://i.imgur.com/unFLwMZ.png" alt="Retrato de Cristian Erre" class="w-full aspect-square object-cover rounded-3xl shadow-soft-lg 
+                        group-hover:shadow-soft-xl transition-all duration-500">
+            <!-- Borde decorativo -->
+            <div class="absolute -inset-4 border-2 border-stone-200 rounded-3xl -z-10 
+                        group-hover:border-stone-300 transition-colors duration-500"></div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO BIO -->
+    <div class="w-full lg:w-3/5 space-y-6">
+
+        <!-- Cita destacada -->
+        <blockquote
+            class="text-2xl lg:text-3xl font-display italic text-stone-800 leading-relaxed border-l-4 border-stone-300 pl-6 py-2">
+            "Mi obra es un diálogo constante entre la tradición pictórica y la inmediatez digital."
+        </blockquote>
+
+        <!-- Párrafos informativos -->
+        <div class="space-y-4 text-stone-700 leading-relaxed">
+            <p class="text-base lg:text-lg">
+                Cristian Erre es un artista visual con una década de trayectoria, reconocido por su versatilidad al
+                moverse entre el <strong class="font-semibold text-stone-900">óleo clásico</strong> y la <strong
+                    class="font-semibold text-stone-900">ilustración digital contemporánea</strong>. Su trabajo explora
+                temas de identidad urbana y fragmentación del paisaje.
+            </p>
+
+            <p class="text-base lg:text-lg">
+                Graduado de la Academia de Bellas Artes, Cristian ha expuesto en galerías de Santiago y Valparaíso. En
+                los últimos años, su enfoque en el <strong class="font-semibold text-stone-900">muralismo</strong> ha
+                ganado notoriedad, buscando llevar el arte a gran escala a espacios públicos y privados.
+            </p>
+        </div>
+
+        <!-- CTA -->
+        <div class="pt-6">
+            <a href="{% url 'contacto' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-stone-900 text-white rounded-full
+                      hover:bg-stone-800 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl
+                      font-medium text-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Consultar cotizaciones y encargos
+            </a>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

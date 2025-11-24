@@ -1,0 +1,372 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Cristian Erre - Artista Visual{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION - MÁS ARRIBA -->
+<section class="min-h-screen flex flex-col items-center justify-center pt-24 md:pt-16 px-4 relative overflow-hidden">
+    <!-- Logo circular MÁS GRANDE con imagen de Cristian Erre -->
+    <div
+        class="w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 rounded-full overflow-hidden mb-8 border-4 border-white shadow-2xl relative z-10 animate-scale-in">
+        <img src="https://i.imgur.com/LNGNwBa.png" alt="Cristian Erre Logo" class="w-full h-full object-cover">
+    </div>
+
+    <!-- Título y descripción -->
+    <div class="text-center max-w-4xl z-10 animate-fade-in">
+        <h1 class="font-display text-5xl md:text-7xl lg:text-8xl text-stone-900 mb-6 tracking-tight leading-tight">
+            Bienvenido al Arte de <span class="italic">Cristian Erre</span>
+        </h1>
+        <p class="text-stone-500 text-lg md:text-xl font-light tracking-wide max-w-2xl mx-auto leading-relaxed">
+            Exploración visual a través del óleo, la ilustración y el muralismo en un lenguaje propio y contemporáneo.
+        </p>
+    </div>
+
+    <!-- Flecha animada -->
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+        <svg class="w-6 h-6 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+        </svg>
+    </div>
+
+    <!-- Elementos decorativos de fondo -->
+    <div class="absolute top-1/4 left-10 w-64 h-64 bg-stone-100 rounded-full blur-3xl -z-0 opacity-50"></div>
+    <div class="absolute bottom-1/4 right-10 w-96 h-96 bg-stone-50 rounded-full blur-3xl -z-0 opacity-50"></div>
+</section>
+
+<!-- EXPOSICIÓN HISTÓRICA - ANCHO COMPLETO -->
+<section id="history" class="py-24 bg-stone-900 text-stone-50 overflow-hidden w-full">
+    <!-- Encabezado con padding -->
+    <div class="px-6 md:px-12 lg:px-16 mb-16">
+        <div
+            class="max-w-7xl mx-auto flex flex-col md:flex-row items-baseline justify-between gap-8 border-b border-white/20 pb-8 animate-slide-up">
+            <h2 class="font-display text-4xl md:text-6xl italic">Exposición Histórica</h2>
+            <p class="text-stone-400 max-w-md text-sm md:text-base leading-relaxed">
+                Obras muralistas y piezas vendidas que forman parte del legado permanente del artista en espacios
+                públicos y privados.
+            </p>
+        </div>
+    </div>
+
+    <!-- Carrusel ANCHO COMPLETO -->
+    <div class="relative w-full">
+        <!-- Contenedor del carrusel -->
+        <div id="historicalCarousel" class="overflow-hidden w-full">
+            <div id="carouselTrack"
+                class="flex transition-transform duration-500 ease-out px-6 md:px-12 lg:px-16 gap-8">
+                {% for obra in obras_historicas %}
+                <div class="group relative min-w-[85vw] md:min-w-[70vw] lg:min-w-[60vw] flex-shrink-0 cursor-pointer obra-card"
+                    data-obra-id="{{ obra.id }}">
+                    <!-- Imagen más grande -->
+                    <div class="relative aspect-[16/10] md:aspect-[21/9] overflow-hidden rounded-lg mb-6 shadow-2xl">
+                        <img src="{{ obra.imagen_url }}" alt="{{ obra.titulo }}"
+                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent group-hover:from-black/40 transition-all duration-500">
+                        </div>
+
+                        <!-- Información superpuesta -->
+                        <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <h3 class="font-display text-3xl md:text-4xl mb-2 text-white">{{ obra.titulo }}</h3>
+                                    <p class="text-stone-300 text-base md:text-lg">{{ obra.get_categoria_display }}</p>
+                                </div>
+                                <span
+                                    class="font-mono text-sm md:text-base text-white bg-white/20 backdrop-blur-sm border border-white/30 px-4 py-2 rounded-full">
+                                    {% if obra.estado == 'VENDIDO' %}Vendido{% else %}{{ obra.get_estado_display }}{%
+                                    endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-stone-400 text-center w-full py-12">
+                    No hay obras históricas disponibles
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Barra de navegación del carrusel -->
+        {% if obras_historicas %}
+        <div class="flex items-center justify-center gap-6 mt-12">
+            <button onclick="prevSlide()"
+                class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition backdrop-blur-sm border border-white/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+
+            <div class="flex gap-3">
+                {% for obra in obras_historicas %}
+                <button onclick="goToSlide({{ forloop.counter0 }})"
+                    class="carousel-dot w-3 h-3 rounded-full bg-white/30 hover:bg-white/50 transition {% if forloop.first %}!bg-white{% endif %}"></button>
+                {% endfor %}
+            </div>
+
+            <button onclick="nextSlide()"
+                class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition backdrop-blur-sm border border-white/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- CATÁLOGO PREVIEW - SOLO 3 OBRAS -->
+<section id="catalog" class="py-24 px-6 bg-stone-50">
+    <div class="container mx-auto max-w-6xl">
+        <div class="text-center mb-16 animate-fade-in">
+            <span class="text-stone-500 text-xs font-bold tracking-widest uppercase mb-4 block">
+                Colección Reciente
+            </span>
+            <h2 class="font-display text-4xl md:text-5xl mb-6 text-stone-900">Catálogo de Obras</h2>
+        </div>
+
+        <!-- Grid de 3 columnas -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+            {% for obra in obras_recientes %}
+            <div class="group animate-scale-in obra-card" data-obra-id="{{ obra.id }}"
+                style="animation-delay: {{ forloop.counter0|multiply:0.1 }}s">
+                <div class="relative aspect-[4/5] bg-stone-100 mb-6 overflow-hidden rounded-lg shadow-sm">
+                    <img src="{{ obra.imagen_url }}" alt="{{ obra.titulo }}"
+                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    <div class="absolute top-4 left-4">
+                        {% if obra.estado == 'VENDIDO' %}
+                        <span
+                            class="text-[10px] uppercase tracking-wider px-3 py-1.5 rounded-full font-medium bg-stone-900 text-white">
+                            Vendido
+                        </span>
+                        {% elif obra.estado == 'DISPONIBLE' %}
+                        <span
+                            class="text-[10px] uppercase tracking-wider px-3 py-1.5 rounded-full font-medium bg-emerald-100 text-emerald-800">
+                            Disponible
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-end">
+                    <div>
+                        <h3
+                            class="font-display text-xl text-stone-900 mb-1 group-hover:text-stone-600 transition-colors cursor-pointer">
+                            {{ obra.titulo }}
+                        </h3>
+                        <p class="text-sm text-stone-500">{{ obra.get_categoria_display }}</p>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center text-stone-500 py-12">
+                No hay obras recientes disponibles
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Botón Ver Catálogo Completo -->
+        <div class="flex justify-center mt-16">
+            <a href="{% url 'catalogo:lista_obras' %}"
+                class="inline-flex items-center h-14 px-10 rounded-full border-2 border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-white transition-all group bg-transparent font-medium text-base">
+                Ver Catálogo Completo
+                <svg class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3">
+                    </path>
+                </svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- MODAL DE DETALLE -->
+<div id="obraModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-soft-xl">
+        <div class="relative">
+            <button onclick="cerrarModal()"
+                class="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition">
+                <svg class="w-6 h-6 text-stone-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+
+            <div class="grid md:grid-cols-2 gap-8 p-8">
+                <div class="relative aspect-[3/4] bg-stone-100 rounded-xl overflow-hidden">
+                    <img id="modalImagen" src="" alt="" class="w-full h-full object-cover">
+                </div>
+
+                <div class="flex flex-col justify-center space-y-6">
+                    <div>
+                        <h2 id="modalTitulo" class="text-3xl font-display font-bold text-stone-900 mb-2"></h2>
+                        <p id="modalArtista" class="text-stone-600 text-lg"></p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-medium text-stone-700">Categoría:</span>
+                            <span id="modalCategoria" class="text-stone-900"></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-medium text-stone-700">Estilos:</span>
+                            <span id="modalEstilos" class="text-stone-900"></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-medium text-stone-700">Estado:</span>
+                            <span id="modalEstado"></span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-medium text-stone-700 mb-2">Descripción</h3>
+                        <p id="modalDescripcion" class="text-stone-600 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Datos de las obras para el modal
+    const obrasData = {
+    {% for obra in obras_historicas %}
+    '{{ obra.id }}': {
+        titulo: '{{ obra.titulo|escapejs }}',
+            artista: 'Cristian Erre',
+                categoria: '{{ obra.get_categoria_display|escapejs }}',
+                    estilos: '{% for estilo in obra.estilos.all %}{{ estilo.nombre }}{% if not forloop.last %}, {% endif %}{% endfor %}',
+                        estado: '{{ obra.estado }}',
+                            estadoDisplay: '{{ obra.get_estado_display|escapejs }}',
+                                descripcion: '{{ obra.descripcion|escapejs }}',
+                                    imagen: '{{ obra.imagen_url|escapejs }}'
+    },
+    {% endfor %}
+    {% for obra in obras_recientes %}
+    '{{ obra.id }}': {
+        titulo: '{{ obra.titulo|escapejs }}',
+            artista: 'Cristian Erre',
+                categoria: '{{ obra.get_categoria_display|escapejs }}',
+                    estilos: '{% for estilo in obra.estilos.all %}{{ estilo.nombre }}{% if not forloop.last %}, {% endif %}{% endfor %}',
+                        estado: '{{ obra.estado }}',
+                            estadoDisplay: '{{ obra.get_estado_display|escapejs }}',
+                                descripcion: '{{ obra.descripcion|escapejs }}',
+                                    imagen: '{{ obra.imagen_url|escapejs }}'
+    } {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+};
+
+    // Carrusel de exposición histórica
+    let currentSlideIndex = 0;
+    const totalSlides = {{ obras_historicas| length }};
+
+    function updateCarousel() {
+        const track = document.getElementById('carouselTrack');
+        const dots = document.querySelectorAll('.carousel-dot');
+
+        if (track && track.children.length > 0) {
+            const slideWidth = track.children[0].offsetWidth;
+            const gap = 32; // gap-8 = 32px
+            const offset = -(currentSlideIndex * (slideWidth + gap));
+            track.style.transform = `translateX(${offset}px)`;
+        }
+
+        dots.forEach((dot, index) => {
+            if (index === currentSlideIndex) {
+                dot.classList.add('!bg-white');
+            } else {
+                dot.classList.remove('!bg-white');
+            }
+        });
+    }
+
+    function nextSlide() {
+        if (currentSlideIndex < totalSlides - 1) {
+            currentSlideIndex++;
+        } else {
+            currentSlideIndex = 0; // Loop back to start
+        }
+        updateCarousel();
+    }
+
+    function prevSlide() {
+        if (currentSlideIndex > 0) {
+            currentSlideIndex--;
+        } else {
+            currentSlideIndex = totalSlides - 1; // Loop to end
+        }
+        updateCarousel();
+    }
+
+    function goToSlide(index) {
+        currentSlideIndex = index;
+        updateCarousel();
+    }
+
+    // Auto-play del carrusel
+    let autoplayInterval = setInterval(nextSlide, 5000);
+
+    // Pausar autoplay al hover
+    document.getElementById('historicalCarousel')?.addEventListener('mouseenter', () => {
+        clearInterval(autoplayInterval);
+    });
+
+    document.getElementById('historicalCarousel')?.addEventListener('mouseleave', () => {
+        autoplayInterval = setInterval(nextSlide, 5000);
+    });
+
+    // Agregar click a todas las tarjetas de obras
+    document.querySelectorAll('.obra-card').forEach((card) => {
+        const obraId = card.getAttribute('data-obra-id');
+        if (obraId && obrasData[obraId]) {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', () => abrirModal(obraId));
+        }
+    });
+
+    function abrirModal(obraId) {
+        const obra = obrasData[obraId];
+        if (!obra) return;
+
+        document.getElementById('modalTitulo').textContent = obra.titulo;
+        document.getElementById('modalArtista').textContent = obra.artista;
+        document.getElementById('modalCategoria').textContent = obra.categoria;
+        document.getElementById('modalEstilos').textContent = obra.estilos || 'Sin estilos';
+        document.getElementById('modalDescripcion').textContent = obra.descripcion;
+        document.getElementById('modalImagen').src = obra.imagen;
+        document.getElementById('modalImagen').alt = obra.titulo;
+
+        const estadoEl = document.getElementById('modalEstado');
+        if (obra.estado === 'DISPONIBLE') {
+            estadoEl.innerHTML = '<span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">DISPONIBLE</span>';
+        } else if (obra.estado === 'VENDIDO') {
+            estadoEl.innerHTML = '<span class="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-sm font-medium">VENDIDO</span>';
+        } else {
+            estadoEl.innerHTML = '<span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">SOLO COTIZACIÓN</span>';
+        }
+
+        document.getElementById('obraModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarModal() {
+        document.getElementById('obraModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') cerrarModal();
+        if (e.key === 'ArrowLeft') prevSlide();
+        if (e.key === 'ArrowRight') nextSlide();
+    });
+
+    document.getElementById('obraModal').addEventListener('click', (e) => {
+        if (e.target.id === 'obraModal') cerrarModal();
+    });
+</script>
+
+{% endblock %}

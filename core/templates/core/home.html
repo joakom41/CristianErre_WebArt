@@ -1,0 +1,242 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Cristian Erre - Artista Visual{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION - Minimalista -->
+<section class="min-h-[90vh] flex flex-col items-center justify-center relative overflow-hidden bg-stone-50">
+    <div class="text-center max-w-5xl z-10 px-6" data-aos="fade-up" data-aos-duration="1000">
+        <p class="text-stone-500 text-sm md:text-base font-medium tracking-[0.2em] uppercase mb-8">
+            Portfolio & Galería
+        </p>
+        <h1 class="font-display text-6xl md:text-8xl lg:text-9xl text-stone-900 mb-8 tracking-tighter leading-none">
+            Cristian Erre
+        </h1>
+        <div class="w-24 h-[1px] bg-stone-900 mx-auto mb-8"></div>
+        <p
+            class="text-stone-600 text-lg md:text-2xl font-light tracking-wide max-w-2xl mx-auto leading-relaxed font-display italic">
+            Muralismo • Ilustración • Óleo
+        </p>
+    </div>
+
+    <div class="absolute bottom-12 left-1/2 -translate-x-1/2" data-aos="fade-in" data-aos-delay="1000">
+        <span class="text-[10px] uppercase tracking-widest text-stone-400 mb-2 block text-center">Descubrir</span>
+        <svg class="w-5 h-5 text-stone-400 animate-bounce mx-auto" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- EXPOSICIÓN HISTÓRICA - Diseño Editorial -->
+<section id="history" class="bg-stone-950 text-stone-50 relative z-20 w-full">
+    <div class="container mx-auto px-6 py-32">
+        <div class="mb-24 md:mb-32" data-aos="fade-up">
+            <span class="block text-stone-500 text-sm tracking-[0.2em] uppercase mb-6">Archivo Principal</span>
+            <h2 class="font-display text-6xl md:text-8xl lg:text-9xl mb-8 leading-none">
+                Exposición <br> <span class="text-stone-600 italic">Histórica</span>
+            </h2>
+            <p
+                class="text-stone-400 max-w-xl text-lg md:text-xl leading-relaxed font-light border-l border-stone-800 pl-6">
+                Una colección curada de las obras muralistas más significativas y piezas vendidas que definen la
+                trayectoria y evolución del artista.
+            </p>
+        </div>
+
+        <div class="flex flex-col gap-32">
+            {% for obra in obras_historicas %}
+            <div class="flex flex-col {% if forloop.counter|divisibleby:2 %}md:flex-row{% else %}md:flex-row-reverse{% endif %} gap-8 md:gap-16 items-center obra-card cursor-pointer"
+                data-obra-id="{{ obra.id }}" data-aos="fade-up" data-aos-offset="200">
+
+                <div class="w-full md:w-2/3 relative aspect-[16/9] md:aspect-[3/2] overflow-hidden bg-stone-900 group">
+                    <img src="{{ obra.imagen_url }}" alt="{{ obra.titulo }}"
+                        class="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105">
+                </div>
+
+                <div class="w-full md:w-1/3 space-y-4">
+                    <div class="text-stone-500 text-sm font-mono border-b border-stone-800 pb-2 mb-4 inline-block">
+                        {{ obra.creado|date:"Y" }} — {{ obra.get_categoria_display }}
+                    </div>
+                    <h3 class="font-display text-4xl md:text-5xl group-hover:text-stone-300 transition-colors">{{ obra.titulo }}</h3>
+                    <p class="text-stone-400 font-light">{{ obra.descripcion|truncatewords:20 }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-stone-400 text-center py-12">No hay obras históricas disponibles</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CATÁLOGO PREVIEW - Minimalista -->
+<section id="catalog" class="py-32 px-6 bg-stone-50 relative z-10">
+    <div class="container mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-stone-200 pb-8"
+            data-aos="fade-up">
+            <div>
+                <h2 class="font-display text-3xl md:text-4xl text-stone-900">Catálogo Disponible</h2>
+            </div>
+            <a href="{% url 'catalogo:lista_obras' %}"
+                class="text-stone-500 hover:text-stone-900 transition-colors hidden md:flex items-center gap-2 text-sm">
+                Ver todo el inventario
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3">
+                    </path>
+                </svg>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-16">
+            {% for obra in obras_recientes %}
+            <div class="group cursor-pointer obra-card" data-obra-id="{{ obra.id }}" data-aos="fade-up"
+                data-aos-delay="{{ forloop.counter0|add:1 }}00">
+
+                <div
+                    class="relative aspect-[4/5] overflow-hidden bg-stone-100 mb-4 grayscale group-hover:grayscale-0 transition-all duration-700">
+                    <img src="{{ obra.imagen_url }}" alt="{{ obra.titulo }}" class="w-full h-full object-cover">
+                </div>
+
+                <div class="space-y-1">
+                    <h3 class="font-display text-xl text-stone-900">{{ obra.titulo }}</h3>
+                    <div class="flex justify-between text-xs text-stone-500 font-medium uppercase tracking-wider">
+                        <span>{{ obra.get_categoria_display }}</span>
+                        <span
+                            class="{% if obra.estado == 'DISPONIBLE' %}text-emerald-600{% else %}text-stone-400 line-through{% endif %}">
+                            {{ obra.get_estado_display }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center text-stone-500 py-12">No hay obras disponibles</div>
+            {% endfor %}
+        </div>
+
+        <div class="mt-12 md:hidden text-center">
+            <a href="{% url 'catalogo:lista_obras' %}" class="text-stone-900 inline-flex items-center gap-2">
+                Ver todo el inventario
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3">
+                    </path>
+                </svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- MODAL DE DETALLE -->
+<div id="obraModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4"
+    style="z-index: 100;">
+    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="relative">
+            <button onclick="cerrarModal()"
+                class="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition">
+                <svg class="w-6 h-6 text-stone-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+            <div class="grid md:grid-cols-2 gap-8 p-8">
+                <div class="relative aspect-[3/4] bg-stone-100 rounded-xl overflow-hidden">
+                    <img id="modalImagen" src="" alt="" class="w-full h-full object-cover">
+                </div>
+                <div class="flex flex-col justify-center space-y-6">
+                    <div>
+                        <h2 id="modalTitulo" class="text-3xl font-display font-bold text-stone-900 mb-2"></h2>
+                        <p id="modalArtista" class="text-stone-600 text-lg">Cristian Erre</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-medium text-stone-700">Categoría:</span>
+                            <span id="modalCategoria" class="text-stone-900"></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-medium text-stone-700">Estilos:</span>
+                            <span id="modalEstilos" class="text-stone-900"></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-medium text-stone-700">Estado:</span>
+                            <span id="modalEstado"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-stone-700 mb-2">Descripción</h3>
+                        <p id="modalDescripcion" class="text-stone-600 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const obrasData = {
+    {% for obra in obras_historicas %}
+    '{{ obra.id }}': {
+        titulo: '{{ obra.titulo|escapejs }}',
+            categoria: '{{ obra.get_categoria_display|escapejs }}',
+                estilos: '{% for estilo in obra.estilos.all %}{{ estilo.nombre }}{% if not forloop.last %}, {% endif %}{% endfor %}',
+                    estado: '{{ obra.estado }}',
+                        estadoDisplay: '{{ obra.get_estado_display|escapejs }}',
+                            descripcion: '{{ obra.descripcion|escapejs }}',
+                                imagen: '{{ obra.imagen_url|escapejs }}'
+    },
+    {% endfor %}
+    {% for obra in obras_recientes %}
+    '{{ obra.id }}': {
+        titulo: '{{ obra.titulo|escapejs }}',
+            categoria: '{{ obra.get_categoria_display|escapejs }}',
+                estilos: '{% for estilo in obra.estilos.all %}{{ estilo.nombre }}{% if not forloop.last %}, {% endif %}{% endfor %}',
+                    estado: '{{ obra.estado }}',
+                        estadoDisplay: '{{ obra.get_estado_display|escapejs }}',
+                            descripcion: '{{ obra.descripcion|escapejs }}',
+                                imagen: '{{ obra.imagen_url|escapejs }}'
+    } {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+};
+
+    document.querySelectorAll('.obra-card').forEach((card) => {
+        const obraId = card.getAttribute('data-obra-id');
+        if (obraId && obrasData[obraId]) {
+            card.addEventListener('click', () => abrirModal(obraId));
+        }
+    });
+
+    function abrirModal(obraId) {
+        const obra = obrasData[obraId];
+        if (!obra) return;
+        document.getElementById('modalTitulo').textContent = obra.titulo;
+        document.getElementById('modalCategoria').textContent = obra.categoria;
+        document.getElementById('modalEstilos').textContent = obra.estilos || 'Sin estilos';
+        document.getElementById('modalDescripcion').textContent = obra.descripcion;
+        document.getElementById('modalImagen').src = obra.imagen;
+        document.getElementById('modalImagen').alt = obra.titulo;
+        const estadoEl = document.getElementById('modalEstado');
+        if (obra.estado === 'DISPONIBLE') {
+            estadoEl.innerHTML = '<span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">DISPONIBLE</span>';
+        } else if (obra.estado === 'VENDIDO') {
+            estadoEl.innerHTML = '<span class="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-sm font-medium">VENDIDO</span>';
+        } else {
+            estadoEl.innerHTML = '<span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">SOLO COTIZACIÓN</span>';
+        }
+        document.getElementById('obraModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarModal() {
+        document.getElementById('obraModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') cerrarModal();
+    });
+
+    document.getElementById('obraModal').addEventListener('click', (e) => {
+        if (e.target.id === 'obraModal') cerrarModal();
+    });
+</script>
+
+{% endblock %}

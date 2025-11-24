@@ -1,0 +1,93 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Gestión de Obras | Admin{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-stone-50 py-8">
+    <div class="max-w-7xl mx-auto px-4">
+
+        <!-- Encabezado -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-4xl font-display font-bold text-stone-900 mb-2">Gestión de Obras</h1>
+                <p class="text-stone-600">Administra tu catálogo completo</p>
+            </div>
+            <a href="{% url 'admin_obra_create' %}"
+                class="bg-stone-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-stone-800 transition duration-300">
+                + Agregar Obra
+            </a>
+        </div>
+
+        <!-- Tabla de Obras -->
+        <div class="bg-white rounded-2xl shadow-soft overflow-hidden">
+            <table class="w-full">
+                <thead class="bg-stone-100 border-b border-stone-200">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-stone-700">Imagen</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-stone-700">Título</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-stone-700">Artista</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-stone-700">Categoría</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-stone-700">Estado</th>
+                        <th class="px-6 py-4 text-right text-sm font-semibold text-stone-700">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-200">
+                    {% for obra in obras %}
+                    <tr class="hover:bg-stone-50 transition">
+                        <td class="px-6 py-4">
+                            <img src="{{ obra.imagen_url }}" alt="{{ obra.titulo }}"
+                                class="w-16 h-16 object-cover rounded-lg">
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="font-medium text-stone-900">{{ obra.titulo }}</p>
+                        </td>
+                        <td class="px-6 py-4 text-stone-600">
+                            {{ obra.artista.nombre|default:"Sin artista" }}
+                        </td>
+                        <td class="px-6 py-4 text-stone-600">
+                            {{ obra.get_categoria_display }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if obra.estado == 'DISPONIBLE' %}
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">
+                                Disponible
+                            </span>
+                            {% elif obra.estado == 'VENDIDO' %}
+                            <span class="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-sm font-medium">
+                                Vendido
+                            </span>
+                            {% else %}
+                            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                                Cotización
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex justify-end gap-2">
+                                <a href="{% url 'admin_obra_edit' obra.id %}"
+                                    class="px-4 py-2 bg-stone-100 text-stone-700 rounded-lg hover:bg-stone-200 transition text-sm font-medium">
+                                    Editar
+                                </a>
+                                <a href="{% url 'admin_obra_delete' obra.id %}"
+                                    onclick="return confirm('¿Estás seguro de eliminar esta obra?')"
+                                    class="px-4 py-2 bg-rose-100 text-rose-700 rounded-lg hover:bg-rose-200 transition text-sm font-medium">
+                                    Eliminar
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-stone-500">
+                            No hay obras registradas. <a href="{% url 'admin_obra_create' %}"
+                                class="text-stone-900 font-medium hover:underline">Agregar la primera obra</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

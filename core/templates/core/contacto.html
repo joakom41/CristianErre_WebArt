@@ -1,0 +1,117 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Contacto y Cotizaciones | Cristian Erre{% endblock %}
+
+{% block content %}
+
+<!-- TÍTULO DE SECCIÓN -->
+<div class="text-center mb-12 lg:mb-16 animate-fade-in">
+    <h1 class="text-4xl lg:text-5xl font-display font-semibold text-stone-900 mb-4">
+        Hablemos de Arte
+    </h1>
+    <p class="text-stone-600 text-base lg:text-lg max-w-2xl mx-auto leading-relaxed">
+        Utiliza el formulario para consultas generales, encargos de obras o cotizaciones específicas de muralismo.
+    </p>
+</div>
+
+<!-- MENSAJES DE ÉXITO -->
+{% if messages %}
+{% for message in messages %}
+<div class="max-w-2xl mx-auto mb-8 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl 
+                flex items-start gap-3 animate-slide-up">
+    <svg class="w-6 h-6 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <div class="flex-1">
+        <p class="text-emerald-800 font-medium">{{ message }}</p>
+    </div>
+    <button onclick="this.parentElement.remove()" class="text-emerald-600 hover:text-emerald-800 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+</div>
+{% endfor %}
+{% endif %}
+
+<!-- FORMULARIO DE CONTACTO -->
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-3xl shadow-soft-xl p-8 lg:p-12">
+
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Campo Nombre -->
+            <div>
+                <label for="id_nombre" class="block text-sm font-medium text-stone-900 mb-2">
+                    Nombre completo
+                </label>
+                <input type="text" name="nombre" id="id_nombre" required class="w-full border border-stone-300 rounded-xl px-4 py-3
+                              focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent
+                              transition-all duration-300 text-stone-900 placeholder-stone-400"
+                    placeholder="Tu nombre">
+                {% if form.nombre.errors %}
+                <p class="mt-2 text-sm text-rose-600">{{ form.nombre.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Campo Email -->
+            <div>
+                <label for="id_email" class="block text-sm font-medium text-stone-900 mb-2">
+                    Correo electrónico
+                </label>
+                <input type="email" name="email" id="id_email" required class="w-full border border-stone-300 rounded-xl px-4 py-3
+                              focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent
+                              transition-all duration-300 text-stone-900 placeholder-stone-400"
+                    placeholder="tu@email.com">
+                {% if form.email.errors %}
+                <p class="mt-2 text-sm text-rose-600">{{ form.email.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Campo Asunto -->
+            <div>
+                <label for="id_asunto" class="block text-sm font-medium text-stone-900 mb-2">
+                    Asunto
+                </label>
+                <select name="asunto" id="id_asunto" required class="w-full border border-stone-300 rounded-xl px-4 py-3
+                               focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent
+                               transition-all duration-300 text-stone-900 bg-white">
+                    <option value="">Selecciona un asunto</option>
+                    <option value="CONSULTA">Consulta General</option>
+                    <option value="ENCARGO">Encargo de Obra</option>
+                    <option value="MURAL">Cotización de Mural</option>
+                    <option value="OTRO">Otro</option>
+                </select>
+                {% if form.asunto.errors %}
+                <p class="mt-2 text-sm text-rose-600">{{ form.asunto.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Campo Mensaje -->
+            <div>
+                <label for="id_mensaje" class="block text-sm font-medium text-stone-900 mb-2">
+                    Mensaje
+                </label>
+                <textarea name="mensaje" id="id_mensaje" rows="6" required class="w-full border border-stone-300 rounded-xl px-4 py-3
+                                 focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent
+                                 transition-all duration-300 text-stone-900 placeholder-stone-400 resize-none"
+                    placeholder="Cuéntanos sobre tu proyecto o consulta..."></textarea>
+                {% if form.mensaje.errors %}
+                <p class="mt-2 text-sm text-rose-600">{{ form.mensaje.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Botón de envío -->
+            <button type="submit" class="w-full bg-stone-900 text-white py-4 rounded-full font-medium text-base
+                           hover:bg-stone-800 hover:scale-[1.02] hover:shadow-xl
+                           transition-all duration-300 shadow-lg">
+                Enviar Solicitud
+            </button>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

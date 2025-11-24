@@ -1,0 +1,110 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Mensajes de Contacto | Admin{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-stone-50 py-8">
+    <div class="max-w-7xl mx-auto px-4">
+
+        <!-- Encabezado -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-display font-bold text-stone-900 mb-2">Mensajes de Contacto</h1>
+            <p class="text-stone-600">Gestiona las solicitudes de contacto</p>
+        </div>
+
+        <!-- Filtros -->
+        <div class="flex gap-3 mb-8">
+            <a href="{% url 'admin_mensajes' %}"
+                class="px-5 py-2 rounded-lg {% if filtro_actual == 'todos' %}bg-stone-900 text-white{% else %}bg-white text-stone-700 border border-stone-300 hover:border-stone-900{% endif %} transition">
+                Todos
+            </a>
+            <a href="{% url 'admin_mensajes' %}?filtro=nuevos"
+                class="px-5 py-2 rounded-lg {% if filtro_actual == 'nuevos' %}bg-blue-600 text-white{% else %}bg-white text-stone-700 border border-stone-300 hover:border-blue-600{% endif %} transition">
+                Nuevos
+            </a>
+            <a href="{% url 'admin_mensajes' %}?filtro=respondidos"
+                class="px-5 py-2 rounded-lg {% if filtro_actual == 'respondidos' %}bg-emerald-600 text-white{% else %}bg-white text-stone-700 border border-stone-300 hover:border-emerald-600{% endif %} transition">
+                Respondidos
+            </a>
+            <a href="{% url 'admin_mensajes' %}?filtro=archivados"
+                class="px-5 py-2 rounded-lg {% if filtro_actual == 'archivados' %}bg-stone-600 text-white{% else %}bg-white text-stone-700 border border-stone-300 hover:border-stone-600{% endif %} transition">
+                Archivados
+            </a>
+        </div>
+
+        <!-- Tabla de Mensajes -->
+        <div class="bg-white rounded-2xl shadow-soft overflow-hidden">
+            <table class="w-full">
+                <thead class="bg-stone-100 border-b border-stone-200">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-stone-700">Nombre</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-stone-700">Email</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-stone-700">Asunto</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-stone-700">Fecha</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-stone-700">Estado</th>
+                        <th class="px-6 py-4 text-right text-sm font-semibold text-stone-700">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-200">
+                    {% for mensaje in mensajes %}
+                    <tr class="hover:bg-stone-50 transition">
+                        <td class="px-6 py-4">
+                            <p class="font-medium text-stone-900">{{ mensaje.nombre }}</p>
+                        </td>
+                        <td class="px-6 py-4 text-stone-600">
+                            {{ mensaje.email }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-stone-900 truncate max-w-xs">{{ mensaje.asunto }}</p>
+                        </td>
+                        <td class="px-6 py-4 text-stone-600 text-sm">
+                            {{ mensaje.fecha_envio|date:"d/m/Y H:i" }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if mensaje.archivado %}
+                            <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-sm font-medium">
+                                Archivado
+                            </span>
+                            {% elif mensaje.respondido %}
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">
+                                Respondido
+                            </span>
+                            {% else %}
+                            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                                Nuevo
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex justify-end gap-2">
+                                <a href="{% url 'admin_mensaje_detail' mensaje.id %}"
+                                    class="px-4 py-2 bg-stone-100 text-stone-700 rounded-lg hover:bg-stone-200 transition text-sm font-medium">
+                                    Ver
+                                </a>
+                                {% if not mensaje.respondido %}
+                                <a href="{% url 'admin_mensaje_respond' mensaje.id %}"
+                                    class="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition text-sm font-medium">
+                                    Responder
+                                </a>
+                                {% endif %}
+                                <a href="{% url 'admin_mensaje_archive' mensaje.id %}"
+                                    class="px-4 py-2 bg-stone-100 text-stone-700 rounded-lg hover:bg-stone-200 transition text-sm font-medium">
+                                    {% if mensaje.archivado %}Desarchivar{% else %}Archivar{% endif %}
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-stone-500">
+                            No hay mensajes en esta categoría.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

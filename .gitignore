@@ -1,0 +1,25 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+media/
+staticfiles/
+
+# Python
+*.py[cod]
+*$py.class
+
+# VS Code
+.vscode/
+
+# Node
+node_modules/
+package-lock.json
+package.json
+
+# Tailwind/Theme (if re-added later)
+theme/static_src/node_modules/
+theme/static/css/dist/

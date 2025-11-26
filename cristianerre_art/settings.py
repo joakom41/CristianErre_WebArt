@@ -30,9 +30,6 @@ INSTALLED_APPS = [
 
     'core',
     'catalogo',
-
-    'tailwind',
-    'theme',     # ← tu app tailwind REAL
 ]
 
 
@@ -107,7 +104,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / "core" / "static",
-    BASE_DIR / "theme" / "static",  # Tailwind CSS compilado
 ]
 
 # ----------------------------------------------------
@@ -125,9 +121,4 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# TAILWIND CONFIG
-TAILWIND_APP_NAME = 'theme'
 
-INTERNAL_IPS = [
-    "127.0.0.1",
-]

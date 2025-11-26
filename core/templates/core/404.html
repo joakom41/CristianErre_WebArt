@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Página no encontrada | Cristian Erre{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex flex-col items-center justify-center px-6 py-12 text-center">
+    <div class="w-full max-w-md mb-8">
+        <img src="https://imgs.search.brave.com/vx4ioO0ZmLerN0gZq_VuwkykBL43Ey-yZpgLere1fe0/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG5p/Lmljb25zY291dC5j/b20vaWxsdXN0cmF0/aW9uL3ByZW1pdW0v/dGh1bWIvd2VicGFn/ZS1lcnJvci00MDQt/aWxsdXN0cmF0aW9u/LXN2Zy1kb3dubG9h/ZC1wbmctNTY2MzIw/MS5wbmc"
+            alt="Error 404" class="w-full h-auto">
+    </div>
+    <h1 class="text-4xl font-display font-bold text-stone-900 mb-4">Página no encontrada</h1>
+    <p class="text-stone-600 mb-8 max-w-lg mx-auto">
+        Lo sentimos, la página que estás buscando no existe o ha sido movida.
+    </p>
+    <a href="{% url 'home' %}"
+        class="px-8 py-3 bg-stone-900 text-white rounded-full hover:bg-stone-800 transition-all duration-300 font-medium">
+        Volver al Inicio
+    </a>
+</div>
+{% endblock %}

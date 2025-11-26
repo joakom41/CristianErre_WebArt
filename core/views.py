@@ -314,3 +314,7 @@ def admin_mensaje_archive_view(request, mensaje_id):
     estado = 'archivado' if mensaje.archivado else 'desarchivado'
     messages.success(request, f'Mensaje {estado} exitosamente.')
     return redirect('admin_mensajes')
+
+
+def error_404_view(request, exception):
+    return render(request, 'core/404.html', status=404)

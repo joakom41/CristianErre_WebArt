@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Cristian Erre - Artista Visual{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION - Minimalista -->
+<section class="min-h-[90vh] flex flex-col items-center justify-center relative overflow-hidden bg-stone-50">
+    <div class="text-center max-w-5xl z-10 px-6" data-aos="fade-up" data-aos-duration="1000">
+        <img src="{% static 'core/img/logo_cristianerre_home.png' %}" alt="Cristian Erre Logo" class="w-72 h-auto mx-auto mb-8">
+        <p class="text-stone-500 text-sm md:text-base font-medium tracking-[0.2em] uppercase mb-8">
+            Portfolio & Galería
+        </p>
+        <h1 class="font-display text-6xl md:text-8xl lg:text-9xl text-stone-900 mb-8 tracking-tighter leading-none">
+            Cristian Erre
+        </h1>
+        <div class="w-24 h-[1px] bg-stone-900 mx-auto mb-8"></div>
+        <p class="text-stone-600 text-lg md:text-2xl font-light tracking-wide max-w-2xl mx-auto leading-relaxed font-display italic">
+            Muralismo • Ilustración • Óleo
+        </p>
+    </div>
+
+    <div class="absolute bottom-12 left-0 right-0 flex justify-center" data-aos="fade-in" data-aos-delay="1000">
+        <div class="flex flex-col items-center gap-2">
+            <span class="text-[10px] uppercase tracking-widest text-stone-400">Descubrir</span>
+            <svg class="w-5 h-5 text-stone-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </div>
+    </div>
+</section>

@@ -17,10 +17,8 @@ def get_carousel_context():
 def home_view(request):
     context = get_carousel_context()
 
-    # Obras históricas: Murales y obras vendidas
-    murales = Obra.objects.filter(estilos__nombre__iexact="Mural")
-    vendidas = Obra.objects.filter(estado="VENDIDO")
-    obras_historicas = (murales | vendidas).distinct().order_by('-creado')[:6]
+    # Obras históricas: Obras vendidas y solo cotización
+    obras_historicas = Obra.objects.filter(estado__in=['VENDIDO', 'COTI']).order_by('-creado')[:6]
     
     # Obras recientes disponibles para el catálogo preview (solo 3)
     obras_recientes = Obra.objects.filter(estado='DISPONIBLE').order_by('-creado')[:3]

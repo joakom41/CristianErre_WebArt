@@ -1,172 +1,188 @@
 {% extends 'core/base.html' %}
-
 {% block title %}Catálogo de Obras | Cristian Erre{% endblock %}
-
 {% block content %}
+<div class="max-w-7xl mx-auto px-6 py-8">
+    <!-- TÍTULO DE SECCIÓN -->
+    <div class="text-center mb-12 lg:mb-16">
+        <h1 class="text-4xl lg:text-5xl font-display font-semibold text-stone-900 mb-4">
+            Catálogo de Obras
+        </h1>
+        <p class="text-stone-600 text-base lg:text-lg">
+            Explora la colección completa de obras disponibles
+        </p>
+    </div>
 
-<!-- TÍTULO DE SECCIÓN -->
-<div class="text-center mb-12 lg:mb-16 animate-fade-in">
-    <h1 class="text-4xl lg:text-5xl font-display font-semibold text-stone-900 mb-4">
-        Catálogo de Obras
-    </h1>
-    <p class="text-stone-600 text-base lg:text-lg">
-        Explora la colección completa de obras disponibles
-    </p>
-</div>
-
-<!-- FILTROS MODERNOS -->
-<div class="mb-12 lg:mb-16 space-y-6">
-
-    <!-- Filtro por Estilo -->
-    <div>
-        <h3 class="text-sm font-medium text-stone-700 mb-3 uppercase tracking-wide">Estilo</h3>
-        <div class="flex flex-wrap gap-3">
-            <a href="{% url 'catalogo:lista_obras' %}" class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-300
+    <!-- FILTROS MINIMALISTAS CON COMBINACIÓN -->
+    <div class="mb-12 space-y-8">
+        <!-- Filtro por Estilo -->
+        <div>
+            <h3 class="text-xs font-semibold text-stone-900 mb-4 uppercase tracking-wider">Estilo</h3>
+            <div class="flex flex-wrap gap-6">
+                <a href="?{% if request.GET.estado %}estado={{ request.GET.estado }}{% endif %}" class="text-sm font-medium transition-all duration-200
                       {% if not estilo_seleccionado %}
-                          bg-stone-900 text-white shadow-lg
+                          text-stone-900 border-b-2 border-stone-900
                       {% else %}
-                          bg-white text-stone-700 border border-stone-300 hover:border-stone-900 hover:text-stone-900
+                          text-stone-500 hover:text-stone-900
                       {% endif %}">
-                Todos los Estilos
-            </a>
-            {% for estilo in estilos_menu %}
-            <a href="{% url 'catalogo:lista_obras' %}?estilo={{ estilo.nombre }}" class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-300
+                    Todos los Estilos
+                </a>
+                {% for estilo in estilos_menu %}
+                <a href="?estilo={{ estilo.nombre }}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}"
+                    class="text-sm font-medium transition-all duration-200
                       {% if estilo_seleccionado == estilo.nombre %}
-                          bg-stone-900 text-white shadow-lg
+                          text-stone-900 border-b-2 border-stone-900
                       {% else %}
-                          bg-white text-stone-700 border border-stone-300 hover:border-stone-900 hover:text-stone-900
+                          text-stone-500 hover:text-stone-900
                       {% endif %}">
-                {{ estilo.nombre }}
-            </a>
-            {% endfor %}
+                    {{ estilo.nombre }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Filtro por Estado -->
+        <div>
+            <h3 class="text-xs font-semibold text-stone-900 mb-4 uppercase tracking-wider">Estado</h3>
+            <div class="flex flex-wrap gap-6">
+                <a href="?{% if estilo_seleccionado %}estilo={{ estilo_seleccionado }}{% endif %}" class="text-sm font-medium transition-all duration-200
+                      {% if not request.GET.estado %}
+                          text-stone-900 border-b-2 border-stone-900
+                      {% else %}
+                          text-stone-500 hover:text-stone-900
+                      {% endif %}">
+                    Todos
+                </a>
+                <a href="?estado=DISPONIBLE{% if estilo_seleccionado %}&estilo={{ estilo_seleccionado }}{% endif %}"
+                    class="text-sm font-medium transition-all duration-200
+                      {% if request.GET.estado == 'DISPONIBLE' %}
+                          text-stone-900 border-b-2 border-stone-900
+                      {% else %}
+                          text-stone-500 hover:text-stone-900
+                      {% endif %}">
+                    Disponibles
+                </a>
+                <a href="?estado=VENDIDO{% if estilo_seleccionado %}&estilo={{ estilo_seleccionado }}{% endif %}" class="text-sm font-medium transition-all duration-200
+                      {% if request.GET.estado == 'VENDIDO' %}
+                          text-stone-900 border-b-2 border-stone-900
+                      {% else %}
+                          text-stone-500 hover:text-stone-900
+                      {% endif %}">
+                    Vendidos
+                </a>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- GRID DE OBRAS PROFESIONAL -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 mb-16">
-    {% for obra in page_obj %}
-    <div class="group animate-scale-in obra-card" data-obra-id="{{ obra.id }}">
+    <!-- MENSAJE INFORMATIVO PARA COTIZACIÓN -->
+    {% if request.GET.estado == 'SOLO_COTIZACION' %}
+    <div class="mb-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
+        <p class="text-stone-700 text-sm">
+            Las cotizaciones se hacen a través de <a href="{% url 'contacto' %}"
+                class="text-blue-600 hover:text-blue-800 font-medium underline">Contacto</a>
+            y puedes ver mi trabajo en <a href="{% url 'home' %}#murales"
+                class="text-blue-600 hover:text-blue-800 font-medium underline">Trabajos</a>.
+        </p>
+    </div>
+    {% endif %}
 
-        <!-- Tarjeta de obra -->
-        <div class="relative overflow-hidden rounded-2xl shadow-soft hover:shadow-soft-xl 
-                    transition-all duration-500 ease-out hover:scale-[1.02] bg-white">
-
-            <!-- Imagen con aspect ratio artístico -->
-            <div class="relative w-full aspect-[3/4] bg-stone-100">
-                <img src="{{ obra.imagen_url }}" alt="{{ obra.titulo }}" class="w-full h-full object-cover object-center group-hover:scale-110 
-                            transition-transform duration-700 ease-out">
-
-                <!-- Overlay gradient en hover -->
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent 
-                            opacity-0 group-hover:opacity-100 transition-opacity duration-400">
-
-                    <!-- Información en hover -->
-                    <div class="absolute bottom-0 left-0 right-0 p-5 transform translate-y-4 
-                                group-hover:translate-y-0 transition-transform duration-400">
-                        <p class="text-white/90 text-sm line-clamp-3 mb-3">
-                            {{ obra.descripcion|truncatechars:120 }}
-                        </p>
-                        <p class="text-white/70 text-xs">
-                            {{ obra.get_categoria_display }}
-                        </p>
-                    </div>
+    <!-- GRID DE OBRAS - 3 COLUMNAS -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        {% for obra in page_obj %}
+        <div class="group obra-card cursor-pointer" data-obra-id="{{ obra.id }}">
+            <!-- Tarjeta minimalista -->
+            <div class="bg-stone-50 hover:bg-white transition-all duration-300">
+                <!-- Imagen -->
+                <div class="relative w-full aspect-[4/5] bg-stone-100 overflow-hidden mb-4">
+                    <img src="{{ obra.imagen_url }}" alt="{{ obra.titulo }}"
+                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                 </div>
-            </div>
+                <!-- Información -->
+                <div class="space-y-1">
+                    <h3 class="font-display text-stone-900 text-base font-medium">
+                        {{ obra.titulo }}
+                    </h3>
+                    <p class="text-stone-500 text-xs uppercase tracking-wide">
+                        {{ obra.get_categoria_display }}
+                    </p>
 
-            <!-- Información de la obra -->
-            <div class="p-5">
-                <h3 class="font-display text-stone-900 text-lg font-medium mb-2 line-clamp-2">
-                    {{ obra.titulo }}
-                </h3>
-
-                <!-- Badge de estado -->
-                <div class="flex items-center gap-2">
+                    <!-- Estado simple -->
                     {% if obra.estado == 'DISPONIBLE' %}
-                    <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
-                        DISPONIBLE
-                    </span>
+                    <p class="text-emerald-600 text-xs font-medium uppercase tracking-wide">Disponible</p>
                     {% elif obra.estado == 'VENDIDO' %}
-                    <span class="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-xs font-medium">
-                        VENDIDO
-                    </span>
+                    <p class="text-stone-400 text-xs font-medium uppercase tracking-wide">Vendido</p>
                     {% else %}
-                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-                        SOLO COTIZACIÓN
-                    </span>
+                    <p class="text-blue-600 text-xs font-medium uppercase tracking-wide">Cotización</p>
                     {% endif %}
                 </div>
             </div>
         </div>
-
-    </div>
-
-    {% empty %}
-    <div class="col-span-full text-center py-24">
-        <svg class="w-16 h-16 mx-auto text-stone-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        <p class="text-stone-500 text-lg font-medium mb-2">
-            Aún no hay obras cargadas en esta sección
-        </p>
-        <p class="text-stone-400 text-sm">
-            Por favor, usa el panel de administración para agregar la primera obra.
-        </p>
-    </div>
-    {% endfor %}
-</div>
-
-<!-- PAGINACIÓN MINIMALISTA -->
-{% if page_obj.has_other_pages %}
-<nav class="flex justify-center items-center gap-2" aria-label="Navegación de páginas">
-
-    <!-- Botón Anterior -->
-    {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 rounded-full border border-stone-300 text-stone-700 
-                  hover:bg-stone-900 hover:text-white hover:border-stone-900 
-                  transition-all duration-300 text-sm font-medium">
-        ← Anterior
-    </a>
-    {% else %}
-    <span class="px-4 py-2 rounded-full border border-stone-200 text-stone-400 text-sm font-medium cursor-not-allowed">
-        ← Anterior
-    </span>
-    {% endif %}
-
-    <!-- Números de página -->
-    <div class="flex gap-2">
-        {% for i in page_obj.paginator.page_range %}
-        {% if page_obj.number == i %}
-        <span class="w-10 h-10 flex items-center justify-center rounded-full 
-                             bg-stone-900 text-white font-medium text-sm shadow-lg">
-            {{ i }}
-        </span>
-        {% else %}
-        <a href="?page={{ i }}" class="w-10 h-10 flex items-center justify-center rounded-full 
-                          border border-stone-300 text-stone-700 hover:bg-stone-100 
-                          transition-all duration-300 text-sm font-medium">
-            {{ i }}
-        </a>
-        {% endif %}
+        {% empty %}
+        <div class="col-span-full text-center py-24">
+            <svg class="w-16 h-16 mx-auto text-stone-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <p class="text-stone-500 text-lg font-medium mb-2">
+                Aún no hay obras cargadas en esta sección
+            </p>
+            <p class="text-stone-400 text-sm">
+                Por favor, usa el panel de administración para agregar la primera obra.
+            </p>
+        </div>
         {% endfor %}
     </div>
 
-    <!-- Botón Siguiente -->
-    {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 rounded-full border border-stone-300 text-stone-700 
+    <!-- PAGINACIÓN MINIMALISTA -->
+    {% if page_obj.has_other_pages %}
+    <nav class="flex justify-center items-center gap-2" aria-label="Navegación de páginas">
+        <!-- Botón Anterior -->
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 rounded-full border border-stone-300 text-stone-700 
                   hover:bg-stone-900 hover:text-white hover:border-stone-900 
                   transition-all duration-300 text-sm font-medium">
-        Siguiente →
-    </a>
-    {% else %}
-    <span class="px-4 py-2 rounded-full border border-stone-200 text-stone-400 text-sm font-medium cursor-not-allowed">
-        Siguiente →
-    </span>
-    {% endif %}
+            ← Anterior
+        </a>
+        {% else %}
+        <span
+            class="px-4 py-2 rounded-full border border-stone-200 text-stone-400 text-sm font-medium cursor-not-allowed">
+            ← Anterior
+        </span>
+        {% endif %}
 
-</nav>
-{% endif %}
+        <!-- Números de página -->
+        <div class="flex gap-2">
+            {% for i in page_obj.paginator.page_range %}
+            {% if page_obj.number == i %}
+            <span class="w-10 h-10 flex items-center justify-center rounded-full 
+                             bg-stone-900 text-white font-medium text-sm shadow-lg">
+                {{ i }}
+            </span>
+            {% else %}
+            <a href="?page={{ i }}" class="w-10 h-10 flex items-center justify-center rounded-full 
+                          border border-stone-300 text-stone-700 hover:bg-stone-100 
+                          transition-all duration-300 text-sm font-medium">
+                {{ i }}
+            </a>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Botón Siguiente -->
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 rounded-full border border-stone-300 text-stone-700 
+                  hover:bg-stone-900 hover:text-white hover:border-stone-900 
+                  transition-all duration-300 text-sm font-medium">
+            Siguiente →
+        </a>
+        {% else %}
+        <span
+            class="px-4 py-2 rounded-full border border-stone-200 text-stone-400 text-sm font-medium cursor-not-allowed">
+            Siguiente →
+        </span>
+        {% endif %}
+    </nav>
+    {% endif %}
+</div>
 
 <!-- MODAL DE DETALLE DE OBRA -->
 <div id="obraModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -180,21 +196,18 @@
                     </path>
                 </svg>
             </button>
-
             <!-- Contenido del modal -->
             <div class="grid md:grid-cols-2 gap-8 p-8">
                 <!-- Imagen -->
                 <div class="relative aspect-[3/4] bg-stone-100 rounded-xl overflow-hidden">
                     <img id="modalImagen" src="" alt="" class="w-full h-full object-cover">
                 </div>
-
                 <!-- Información -->
                 <div class="flex flex-col justify-center space-y-6">
                     <div>
                         <h2 id="modalTitulo" class="text-3xl font-display font-bold text-stone-900 mb-2"></h2>
                         <p id="modalArtista" class="text-stone-600 text-lg"></p>
                     </div>
-
                     <div class="space-y-3">
                         <div class="flex items-center gap-2">
                             <span class="text-sm font-medium text-stone-700">Categoría:</span>
@@ -209,7 +222,6 @@
                             <span id="modalEstado"></span>
                         </div>
                     </div>
-
                     <div>
                         <h3 class="text-sm font-medium text-stone-700 mb-2">Descripción</h3>
                         <p id="modalDescripcion" class="text-stone-600 leading-relaxed"></p>
@@ -219,7 +231,6 @@
         </div>
     </div>
 </div>
-
 <script>
     // Datos de las obras para el modal
     const obrasData = {
@@ -236,7 +247,6 @@
     } {% if not forloop.last %}, {% endif %}
     {% endfor %}
 };
-
     // Agregar click a todas las tarjetas de obras
     document.querySelectorAll('.obra-card').forEach((card) => {
         const obraId = card.getAttribute('data-obra-id');
@@ -245,11 +255,9 @@
             card.addEventListener('click', () => abrirModal(obraId));
         }
     });
-
     function abrirModal(obraId) {
         const obra = obrasData[obraId];
         if (!obra) return;
-
         // Llenar datos del modal
         document.getElementById('modalTitulo').textContent = obra.titulo;
         document.getElementById('modalArtista').textContent = obra.artista;
@@ -258,7 +266,6 @@
         document.getElementById('modalDescripcion').textContent = obra.descripcion;
         document.getElementById('modalImagen').src = obra.imagen;
         document.getElementById('modalImagen').alt = obra.titulo;
-
         // Badge de estado
         const estadoEl = document.getElementById('modalEstado');
         if (obra.estado === 'DISPONIBLE') {
@@ -268,26 +275,21 @@
         } else {
             estadoEl.innerHTML = '<span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">SOLO COTIZACIÓN</span>';
         }
-
         // Mostrar modal
         document.getElementById('obraModal').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     }
-
     function cerrarModal() {
         document.getElementById('obraModal').classList.add('hidden');
         document.body.style.overflow = 'auto';
     }
-
     // Cerrar con ESC
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') cerrarModal();
     });
-
     // Cerrar al hacer click fuera del modal
     document.getElementById('obraModal').addEventListener('click', (e) => {
         if (e.target.id === 'obraModal') cerrarModal();
     });
 </script>
-
 {% endblock %}

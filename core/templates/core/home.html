@@ -8,6 +8,11 @@
 <!-- HERO SECTION - Minimalista -->
 <section class="min-h-[90vh] flex flex-col items-center justify-center relative overflow-hidden bg-stone-50">
     <div class="text-center max-w-5xl z-10 px-6" data-aos="fade-up" data-aos-duration="1000">
+        <!-- Logo Grande Centrado -->
+        <div class="mb-12" data-aos="zoom-in" data-aos-delay="200">
+            <img src="{% static 'core/img/logo_cristianerre_home.png' %}" alt="Cristian Erre Logo"
+                class="w-72 h-72 mx-auto">
+        </div>
         <p class="text-stone-500 text-sm md:text-base font-medium tracking-[0.2em] uppercase mb-8">
             Portfolio & Galería
         </p>
@@ -59,7 +64,8 @@
                     <div class="text-stone-500 text-sm font-mono border-b border-stone-800 pb-2 mb-4 inline-block">
                         {{ obra.creado|date:"Y" }} — {{ obra.get_categoria_display }}
                     </div>
-                    <h3 class="font-display text-4xl md:text-5xl group-hover:text-stone-300 transition-colors">{{ obra.titulo }}</h3>
+                    <h3 class="font-display text-4xl md:text-5xl group-hover:text-stone-300 transition-colors">
+                        {{obra.titulo }}</h3>
                     <p class="text-stone-400 font-light">{{ obra.descripcion|truncatewords:20 }}</p>
                 </div>
             </div>

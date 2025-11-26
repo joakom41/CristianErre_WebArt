@@ -100,11 +100,46 @@
         </div>
     </nav>
 
+    <!-- NAVBAR MODERNO -->
+    <nav
+        class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-stone-50/80 backdrop-blur-md transition-all duration-300">
+        <div class="flex items-center gap-2">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'core/img/logo_cristianerre.png' %}" alt="Cristian Erre Logo"
+                    class="h-10 w-auto hover:opacity-80 transition-all duration-300">
+            </a>
+        </div>
+        <div class="flex-1 flex justify-center items-center gap-8 font-medium text-sm tracking-wide">
+            <a href="{% url 'home' %}" class="hover:text-stone-600 transition-colors">Inicio</a>
+            <a href="{% url 'catalogo:lista_obras' %}" class="hover:text-stone-600 transition-colors">Catálogo</a>
+            <a href="{% url 'contacto' %}" class="hover:text-stone-600 transition-colors">Contacto</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="{% url 'bio' %}" class="hidden md:block text-sm hover:text-stone-600 transition-colors">El
+                Artista</a>
+            <a href="{% url 'home' %}#history"
+                class="hidden md:block text-sm hover:text-stone-600 transition-colors">Historia</a>
+            {% if user.is_authenticated %}
+            {% if user.is_staff or user.is_superuser %}
+            <a href="{% url 'admin_panel' %}"
+                class="hidden sm:flex border border-stone-200 hover:bg-stone-100 rounded-full px-6 py-2 text-xs uppercase tracking-wider bg-transparent transition">
+                Panel Admin
+            </a>
+            {% endif %}
+            <a href="{% url 'logout' %}" class="text-sm hover:text-stone-600 transition-colors">Cerrar Sesión</a>
+            {% else %}
+            <a href="{% url 'login' %}"
+                class="hidden sm:flex border border-stone-200 hover:bg-stone-100 rounded-full px-6 py-2 text-xs uppercase tracking-wider bg-transparent transition">
+                Login
+            </a>
+            {% endif %}
+        </div>
+    </nav>
     <!-- CONTENIDO PRINCIPAL -->
-    <main class="w-full min-h-screen">
+    <main class="w-full min-h-screen pt-20">
         <!-- Mensajes de Django -->
         {% if messages %}
-        <div class="max-w-7xl mx-auto px-4 mt-24">
+        <div class="max-w-7xl mx-auto px-4 mt-4">
             {% for message in messages %}
             <div
                 class="bg-{% if message.tags == 'error' %}rose{% elif message.tags == 'success' %}emerald{% else %}blue{% endif %}-100 border border-{% if message.tags == 'error' %}rose{% elif message.tags == 'success' %}emerald{% else %}blue{% endif %}-200 text-{% if message.tags == 'error' %}rose{% elif message.tags == 'success' %}emerald{% else %}blue{% endif %}-800 px-6 py-4 rounded-lg mb-4">
@@ -113,12 +148,10 @@
             {% endfor %}
         </div>
         {% endif %}
-
         <div class="w-full">
             {% block content %}{% endblock %}
         </div>
     </main>
-
     <!-- FOOTER MODERNO -->
     <footer class="bg-stone-900 text-stone-400 py-12 border-t border-stone-800">
         <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
@@ -126,17 +159,14 @@
                 <p class="font-display text-white text-lg mb-2">Cristian Erre</p>
                 <p class="text-sm">Artista Visual & Muralista</p>
             </div>
-
             <div class="flex gap-6 text-sm">
                 <a href="https://instagram.com/cristianerre" target="_blank"
                     class="hover:text-white transition-colors">Instagram</a>
                 <a href="{% url 'contacto' %}" class="hover:text-white transition-colors">Email</a>
             </div>
-
             <div class="text-xs text-stone-600">© 2025 Cristian Erre. Todos los derechos reservados.</div>
         </div>
     </footer>
-
     <!-- AOS JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>

@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>Cristian Erre - Portfolio & Catálogo de Arte</h1>
+  <h1>Cristian Erre - Portafolio & Catálogo de Arte</h1>
   <p>
     Plataforma web minimalista y elegante diseñada para el artista visual y muralista <strong>Cristian Erre</strong>.<br>
     Este proyecto sirve como portafolio digital, catálogo de obras y punto de contacto para clientes y admiradores.

@@ -1,0 +1,227 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Crear Dossier - Cristian Erre{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-stone-50 py-8">
+    <div class="max-w-6xl mx-auto px-4">
+        <!-- Encabezado -->
+        <div class="mb-12 text-center" data-aos="fade-up">
+            <h1 class="text-5xl font-display font-bold text-stone-900 mb-4">Generar Dossier</h1>
+            <div class="w-24 h-1 bg-stone-900 mx-auto mb-6"></div>
+            <p class="text-stone-600 text-lg max-w-2xl mx-auto">
+                Crea un documento profesional en PDF con las obras seleccionadas para compartir tu portafolio artístico
+            </p>
+        </div>
+        
+        <form method="post" id="dossier-form" class="space-y-8" data-aos="fade-up" data-aos-delay="100">
+            {% csrf_token %}
+            
+            <!-- Sección: Información del Artista -->
+            <div class="bg-white rounded-2xl shadow-soft border border-stone-200 overflow-hidden">
+                <div class="bg-stone-900 text-white px-8 py-6">
+                    <h2 class="text-2xl font-display font-semibold">Información del Artista</h2>
+                    <p class="text-stone-300 text-sm mt-1">Completa los datos principales del portafolio</p>
+                </div>
+                <div class="p-8 space-y-6">
+                    <div>
+                        <label for="{{ form.nombre_artista.id_for_label }}" class="block text-sm font-medium text-stone-900 mb-2 uppercase tracking-wider">
+                            {{ form.nombre_artista.label }}
+                        </label>
+                        {{ form.nombre_artista }}
+                    </div>
+                    <div>
+                        <label for="{{ form.bio_artista.id_for_label }}" class="block text-sm font-medium text-stone-900 mb-2 uppercase tracking-wider">
+                            {{ form.bio_artista.label }}
+                        </label>
+                        {{ form.bio_artista }}
+                        <p class="text-xs text-stone-500 mt-2">Biografía o descripción del artista (opcional)</p>
+                    </div>
+                    <div>
+                        <label for="{{ form.foto_artista_url.id_for_label }}" class="block text-sm font-medium text-stone-900 mb-2 uppercase tracking-wider">
+                            {{ form.foto_artista_url.label }}
+                        </label>
+                        {{ form.foto_artista_url }}
+                        <p class="text-xs text-stone-500 mt-2">URL de la imagen del artista. Ejemplo: https://i.imgur.com/ejemplo.jpg</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección: Selección de Obras -->
+            <div class="bg-white rounded-2xl shadow-soft border border-stone-200 overflow-hidden">
+                <div class="bg-stone-900 text-white px-8 py-6">
+                    <h2 class="text-2xl font-display font-semibold">Selección de Obras</h2>
+                    <p class="text-stone-300 text-sm mt-1">Elige hasta {{ max_obras }} obras para incluir en el dossier</p>
+                </div>
+                <div class="p-8">
+                    <div id="obras-container" class="space-y-4">
+                        <div class="obra-row">
+                            <label for="id_obra_1" class="block text-sm font-medium text-stone-900 mb-2 uppercase tracking-wider">Obra #1</label>
+                            {{ form.obra_1 }}
+                        </div>
+                        <div class="obra-row">
+                            <label for="id_obra_2" class="block text-sm font-medium text-stone-900 mb-2 uppercase tracking-wider">Obra #2</label>
+                            {{ form.obra_2 }}
+                        </div>
+                        <div class="obra-row">
+                            <label for="id_obra_3" class="block text-sm font-medium text-stone-900 mb-2 uppercase tracking-wider">Obra #3</label>
+                            {{ form.obra_3 }}
+                        </div>
+                        <div class="obra-row">
+                            <label for="id_obra_4" class="block text-sm font-medium text-stone-900 mb-2 uppercase tracking-wider">Obra #4</label>
+                            {{ form.obra_4 }}
+                        </div>
+                        <div class="obra-row">
+                            <label for="id_obra_5" class="block text-sm font-medium text-stone-900 mb-2 uppercase tracking-wider">Obra #5</label>
+                            {{ form.obra_5 }}
+                        </div>
+                        <div class="obra-row">
+                            <label for="id_obra_6" class="block text-sm font-medium text-stone-900 mb-2 uppercase tracking-wider">Obra #6</label>
+                            {{ form.obra_6 }}
+                        </div>
+                        <div class="obra-row">
+                            <label for="id_obra_7" class="block text-sm font-medium text-stone-900 mb-2 uppercase tracking-wider">Obra #7</label>
+                            {{ form.obra_7 }}
+                        </div>
+                        <div class="obra-row">
+                            <label for="id_obra_8" class="block text-sm font-medium text-stone-900 mb-2 uppercase tracking-wider">Obra #8</label>
+                            {{ form.obra_8 }}
+                        </div>
+                        <div class="obra-row">
+                            <label for="id_obra_9" class="block text-sm font-medium text-stone-900 mb-2 uppercase tracking-wider">Obra #9</label>
+                            {{ form.obra_9 }}
+                        </div>
+                        <div class="obra-row">
+                            <label for="id_obra_10" class="block text-sm font-medium text-stone-900 mb-2 uppercase tracking-wider">Obra #10</label>
+                            {{ form.obra_10 }}
+                        </div>
+                    </div>
+                    <!-- El botón de agregar y el contador se crearán dinámicamente con JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Botones de acción -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center" data-aos="fade-up" data-aos-delay="200">
+                <button type="submit" class="w-full sm:w-auto bg-stone-900 text-white px-12 py-4 rounded-full font-medium hover:bg-stone-800 transition-all duration-300 shadow-lg hover:shadow-xl uppercase tracking-wider text-sm">
+                    Generar PDF
+                </button>
+                <a href="{% url 'admin_panel' %}" class="w-full sm:w-auto border-2 border-stone-300 text-stone-700 px-12 py-4 rounded-full font-medium hover:bg-stone-100 transition-all duration-300 uppercase tracking-wider text-sm text-center">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Estilos para inputs y selects con el diseño de la página */
+    #dossier-form select {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 2px solid #e7e5e4;
+        border-radius: 0.75rem;
+        background-color: #fafaf9;
+        font-size: 0.9375rem;
+        color: #292524;
+        transition: all 0.3s ease;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    #dossier-form select:hover {
+        border-color: #d6d3d1;
+        background-color: white;
+    }
+    
+    #dossier-form select:focus {
+        outline: none;
+        border-color: #292524;
+        background-color: white;
+        box-shadow: 0 0 0 4px rgba(41, 37, 36, 0.1);
+    }
+    
+    #dossier-form input[type="text"],
+    #dossier-form input[type="url"],
+    #dossier-form textarea {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 2px solid #e7e5e4;
+        border-radius: 0.75rem;
+        background-color: #fafaf9;
+        font-size: 0.9375rem;
+        color: #292524;
+        transition: all 0.3s ease;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    #dossier-form input[type="text"]:hover,
+    #dossier-form input[type="url"]:hover,
+    #dossier-form textarea:hover {
+        border-color: #d6d3d1;
+        background-color: white;
+    }
+    
+    #dossier-form input:focus,
+    #dossier-form textarea:focus {
+        outline: none;
+        border-color: #292524;
+        background-color: white;
+        box-shadow: 0 0 0 4px rgba(41, 37, 36, 0.1);
+    }
+    
+    #dossier-form textarea {
+        resize: vertical;
+        min-height: 120px;
+        line-height: 1.6;
+    }
+    
+    /* Estilos para las filas de obra */
+    .obra-row {
+        padding: 1.25rem;
+        background: #fafaf9;
+        border-radius: 0.75rem;
+        border: 1px solid #e7e5e4;
+        transition: all 0.3s ease;
+    }
+    
+    .obra-row:hover {
+        background: white;
+        border-color: #d6d3d1;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Botones dinámicos de JavaScript */
+    #dossier-form .btn-eliminar-obra {
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.8125rem;
+    }
+    
+    #dossier-form #agregar-obra-btn {
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.8125rem;
+    }
+    
+    /* Shadow suave para las cards */
+    .shadow-soft {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+    
+    /* Animación de entrada */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<script src="{% static 'dossier/js/dossier.js' %}"></script>
+{% endblock %}

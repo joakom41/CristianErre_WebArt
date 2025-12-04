@@ -11,7 +11,7 @@ SECRET_KEY = 'django-insecure-lxi3_5#e5oqihsy45=rrnfu_=*l2yaz4jp&%-svt+z(8971=vg
 
 # Para probar la página 404 personalizada debemos ejecutar con DEBUG = False.
 
-DEBUG = False
+DEBUG = True  # Temporalmente True para debug
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] # Añado hosts por buena práctica
 
 # ----------------------------------------------------
@@ -30,6 +30,8 @@ INSTALLED_APPS = [
 
     'core',
     'catalogo',
+
+    'dossier',
 ]
 
 

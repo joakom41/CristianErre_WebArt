@@ -13,7 +13,10 @@ urlpatterns = [
     
     # URLs del Catálogo (Obras de Arte)
     # Usamos un namespace 'catalogo' para evitar conflictos (ej: catalogo:lista_obras)
-    path('catalogo/', include('catalogo.urls')), 
+    path('catalogo/', include('catalogo.urls')),
+    
+    # URLs del Dossier (Generación de PDFs)
+    path('dossier/', include('dossier.urls')),
 ]
 
 # Configuración de URLs para archivos MEDIA y STATIC

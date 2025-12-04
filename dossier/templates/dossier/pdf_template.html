@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dossier - {{ dossier.nombre_artista }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+            color: #2c2c2c;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            font-weight: 300;
+        }
+        
+        /* Portada minimalista */
+        .portada {
+            page-break-after: always;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f5f5f4 0%, #e7e5e4 100%);
+            position: relative;
+            padding: 3cm;
+        }
+        
+        .portada::before {
+            content: '';
+            position: absolute;
+            top: 2cm;
+            left: 2cm;
+            right: 2cm;
+            bottom: 2cm;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .portada-content {
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .portada img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 2cm;
+            border: 2px solid #292524;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .portada h1 {
+            font-size: 42pt;
+            margin: 0 0 0.3cm 0;
+            color: #292524;
+            font-weight: 200;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .portada .subtitulo {
+            font-size: 14pt;
+            color: #78716c;
+            margin-bottom: 2cm;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        
+        .portada .bio {
+            max-width: 500px;
+            text-align: center;
+            font-size: 11pt;
+            line-height: 1.8;
+            color: #57534e;
+            margin: 0 auto;
+        }
+        
+        .portada .fecha {
+            position: absolute;
+            bottom: 2.5cm;
+            font-size: 9pt;
+            color: #a8a29e;
+            letter-spacing: 1px;
+        }
+        
+        /* Página de obra - diseño mejorado */
+        .obra-page {
+            page-break-after: always;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 2cm 3cm;
+            background: white;
+            position: relative;
+        }
+        
+        .obra-page:last-child {
+            page-break-after: auto;
+        }
+        
+        /* Línea decorativa superior */
+        .obra-page::before {
+            content: '';
+            position: absolute;
+            top: 1.5cm;
+            left: 3cm;
+            width: 50px;
+            height: 2px;
+            background: #292524;
+        }
+        
+        .obra-image-container {
+            flex: 0 0 auto;
+            max-height: 14cm;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5cm;
+        }
+        
+        .obra-page img {
+            max-width: 100%;
+            max-height: 14cm;
+            object-fit: contain;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .obra-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .obra-info h2 {
+            font-size: 22pt;
+            margin: 0 0 0.5cm 0;
+            color: #292524;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+        
+        .obra-info .metadata {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.4cm;
+            margin-bottom: 1cm;
+            padding-bottom: 0.8cm;
+            border-bottom: 1px solid #e7e5e4;
+        }
+        
+        .metadata-item {
+            font-size: 10pt;
+            color: #57534e;
+        }
+        
+        .metadata-item strong {
+            color: #292524;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 0.1cm;
+            font-size: 9pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .metadata-value {
+            color: #78716c;
+            font-weight: 300;
+        }
+        
+        .obra-info .descripcion {
+            font-size: 10pt;
+            text-align: justify;
+            line-height: 1.7;
+            color: #57534e;
+            font-weight: 300;
+            margin-top: 0.5cm;
+        }
+        
+        .obra-info .descripcion p {
+            margin: 0 0 0.5cm 0;
+        }
+        
+        .obra-info .descripcion p:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Estilos para elementos especiales */
+        .no-estilos, .no-artista {
+            color: #a8a29e;
+            font-style: italic;
+            font-size: 9pt;
+        }
+        
+        /* Número de página */
+        .page-number {
+            position: absolute;
+            bottom: 1.5cm;
+            right: 3cm;
+            font-size: 9pt;
+            color: #a8a29e;
+        }
+    </style>
+</head>
+<body>
+    <!-- PORTADA -->
+    <div class="portada">
+        <div class="portada-content">
+            {% if dossier.foto_artista_url %}
+            <img src="{{ dossier.foto_artista_url }}" alt="Foto de {{ dossier.nombre_artista }}" onerror="this.style.display='none'">
+            {% endif %}
+            <h1>{{ dossier.nombre_artista }}</h1>
+            <div class="subtitulo">Dossier de Obras</div>
+            {% if dossier.bio_artista %}
+                <div class="bio">{{ dossier.bio_artista }}</div>
+            {% endif %}
+        </div>
+        <div class="fecha">{{ dossier.fecha_generacion|date:"d \d\e F \d\e Y" }}</div>
+    </div>
+    
+    <!-- OBRAS (UNA POR PÁGINA) -->
+    {% for dossier_obra in obras %}
+        <div class="obra-page">
+            <div class="obra-image-container">
+                <img src="{{ dossier_obra.obra.imagen_url }}" 
+                     alt="{{ dossier_obra.obra.titulo }}"
+                     onerror="this.style.display='none'">
+            </div>
+            
+            <div class="obra-info">
+                <h2>{{ dossier_obra.obra.titulo }}</h2>
+                
+                <div class="metadata">
+                    <div class="metadata-item">
+                        <strong>Categoría</strong>
+                        <span class="metadata-value">{{ dossier_obra.obra.get_categoria_display }}</span>
+                    </div>
+                    
+                    <div class="metadata-item">
+                        <strong>Estado</strong>
+                        <span class="metadata-value">{{ dossier_obra.obra.get_estado_display }}</span>
+                    </div>
+                    
+                    {% if dossier_obra.obra.artista %}
+                    <div class="metadata-item">
+                        <strong>Artista</strong>
+                        <span class="metadata-value">{{ dossier_obra.obra.artista.nombre }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="metadata-item">
+                        <strong>Estilos</strong>
+                        <span class="metadata-value">
+                        {% if dossier_obra.obra.estilos.all %}
+                            {% for estilo in dossier_obra.obra.estilos.all %}{{ estilo.nombre }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        {% else %}
+                            <span class="no-estilos">—</span>
+                        {% endif %}
+                        </span>
+                    </div>
+                </div>
+                
+                {% if dossier_obra.obra.descripcion %}
+                <div class="descripcion">
+                    {{ dossier_obra.obra.descripcion }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="page-number">{{ forloop.counter }} / {{ obras|length }}</div>
+        </div>
+    {% endfor %}
+</body>
+</html>

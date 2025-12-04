@@ -83,7 +83,7 @@
         </div>
 
         <!-- Acciones Rápidas -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Gestión de Obras -->
             <div class="bg-white rounded-2xl shadow-soft p-8">
                 <h2 class="text-2xl font-display font-bold text-stone-900 mb-4">Gestión de Obras</h2>
@@ -113,6 +113,21 @@
                         class="block w-full bg-blue-100 text-blue-900 text-center py-3 rounded-lg font-medium hover:bg-blue-200 transition duration-300">
                         Ver Mensajes Nuevos ({{ mensajes_nuevos }})
                     </a>
+                </div>
+            </div>
+
+            <!-- Generar Dossier -->
+            <div class="bg-white rounded-2xl shadow-soft p-8">
+                <h2 class="text-2xl font-display font-bold text-stone-900 mb-4">Dossier en PDF</h2>
+                <p class="text-stone-600 mb-6">Crea catálogos profesionales</p>
+                <div class="space-y-3">
+                    <a href="{% url 'dossier:crear_dossier' %}"
+                        class="block w-full bg-stone-900 text-white text-center py-3 rounded-lg font-medium hover:bg-stone-800 transition duration-300">
+                        Crear Nuevo Dossier
+                    </a>
+                    <div class="text-sm text-stone-500 text-center mt-2">
+                        Genera PDFs con hasta 20 obras
+                    </div>
                 </div>
             </div>
         </div>

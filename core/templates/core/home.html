@@ -35,42 +35,46 @@
     </div>
 </section>
 
-<!-- EXPOSICIÓN HISTÓRICA - Diseño Editorial -->
+<!-- EXPOSICIÓN HISTÓRICA - Diseño Editorial (usando selección de exposiciones) -->
 <section id="history" class="bg-stone-950 text-stone-50 relative z-20 w-full">
-    <div class="container mx-auto px-6 py-32">
-        <div class="mb-24 md:mb-32" data-aos="fade-up">
+    <div class="container mx-auto px-6 py-32 max-w-5xl">
+        <div class="mb-16 md:mb-20" data-aos="fade-up">
             <span class="block text-stone-500 text-sm tracking-[0.2em] uppercase mb-6">Archivo Principal</span>
-            <h2 class="font-display text-6xl md:text-8xl lg:text-9xl mb-8 leading-none">
+            <h2 class="font-display text-6xl md:text-8xl lg:text-9xl mb-6 leading-none">
                 Exposición <br> <span class="text-stone-600 italic">Histórica</span>
             </h2>
             <p
                 class="text-stone-400 max-w-xl text-lg md:text-xl leading-relaxed font-light border-l border-stone-800 pl-6">
                 Una colección curada de las obras muralistas más significativas y piezas vendidas que definen la
-                trayectoria y evolución del artista.
+                trayectoria y evolución del artista. Selección manual (máx 6) ordenada por año de exposición.
             </p>
+            <div class="mt-4 text-sm text-stone-400">Actuales: {{ exposiciones|length }}/6</div>
         </div>
 
-        <div class="flex flex-col gap-32">
-            {% for obra in obras_historicas %}
-            <div class="flex flex-col {% if forloop.counter|divisibleby:2 %}md:flex-row{% else %}md:flex-row-reverse{% endif %} gap-8 md:gap-16 items-center obra-card cursor-pointer"
-                data-obra-id="{{ obra.id }}" data-aos="fade-up" data-aos-offset="200">
-
-                <div class="w-full md:w-2/3 relative aspect-[16/9] md:aspect-[3/2] overflow-hidden bg-stone-900 group">
-                    <img src="{{ obra.imagen_url }}" alt="{{ obra.titulo }}"
-                        class="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105">
-                </div>
-
-                <div class="w-full md:w-1/3 space-y-4">
-                    <div class="text-stone-500 text-sm font-mono border-b border-stone-800 pb-2 mb-4 inline-block">
-                        {{ obra.creado|date:"Y" }} — {{ obra.get_categoria_display }}
+        <div class="space-y-14">
+            {% for obra in exposiciones %}
+            {% with year_val=obra.año_exposicion|default:obra.creado|date:"Y" %}
+            <div class="flex flex-col md:flex-row {% if forloop.counter|divisibleby:2 %}md:flex-row-reverse md:text-right{% endif %} items-start gap-8 md:gap-12 obra-card cursor-pointer" data-obra-id="{{ obra.id }}" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
+                <div class="w-full md:w-2/3 relative rounded-2xl overflow-hidden border border-stone-800 bg-stone-900/40 shadow-[0_20px_70px_-40px_rgba(0,0,0,0.8)]">
+                    <img src="{{ obra.imagen_url }}" alt="{{ obra.titulo }}" class="w-full h-full object-cover transition duration-700 hover:scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-stone-950/30 to-transparent"></div>
+                    <div class="absolute top-4 left-4 right-4 flex items-center justify-between text-xs text-stone-100">
+                        <span class="px-3 py-1 rounded-full bg-white/10 border border-white/10">{{ obra.get_categoria_display }}</span>
+                        <span class="px-3 py-1 rounded-full bg-white/10 border border-white/10 font-semibold">{{ year_val }}</span>
                     </div>
-                    <h3 class="font-display text-4xl md:text-5xl group-hover:text-stone-300 transition-colors">
-                        {{obra.titulo }}</h3>
-                    <p class="text-stone-400 font-light">{{ obra.descripcion|truncatewords:20 }}</p>
+                </div>
+                <div class="w-full md:w-1/3">
+                    <h3 class="font-display text-3xl text-stone-50 mb-3">{{ obra.titulo }}</h3>
+                    <p class="text-stone-400 text-sm mb-2">{{ obra.get_categoria_display }}</p>
+                    <p class="text-stone-200 text-sm font-semibold mb-4">{{ year_val }}</p>
+                    {% if obra.descripcion %}
+                    <p class="text-stone-300 text-sm leading-relaxed">{{ obra.descripcion }}</p>
+                    {% endif %}
                 </div>
             </div>
+            {% endwith %}
             {% empty %}
-            <div class="text-stone-400 text-center py-12">No hay obras históricas disponibles</div>
+            <div class="text-center text-stone-400 py-12">Aún no se han seleccionado obras para exposiciones.</div>
             {% endfor %}
         </div>
     </div>
@@ -201,6 +205,19 @@
                                 imagen: '{{ obra.imagen_url|escapejs }}'
     } {% if not forloop.last %}, {% endif %}
     {% endfor %}
+    {% if exposiciones %},
+    {% for obra in exposiciones %}
+    '{{ obra.id }}': {
+        titulo: '{{ obra.titulo|escapejs }}',
+            categoria: '{{ obra.get_categoria_display|escapejs }}',
+                estilos: '{% for estilo in obra.estilos.all %}{{ estilo.nombre }}{% if not forloop.last %}, {% endif %}{% endfor %}',
+                    estado: '{{ obra.estado }}',
+                        estadoDisplay: '{{ obra.get_estado_display|escapejs }}',
+                            descripcion: '{{ obra.descripcion|escapejs }}',
+                                imagen: '{{ obra.imagen_url|escapejs }}'
+    }{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+    {% endif %}
 };
 
     document.querySelectorAll('.obra-card').forEach((card) => {

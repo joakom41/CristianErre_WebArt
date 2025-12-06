@@ -72,6 +72,7 @@ class Obra(models.Model):
         ('DISPONIBLE', 'Disponible para Venta'),
         ('VENDIDO', 'Vendido'),
         ('COTI', 'Sólo Cotización'),
+        ('EXPOSICION', 'Exposición Histórica'),
         ('ARCHIVADO', 'Archivado'),
     )
     estado = models.CharField(
@@ -81,6 +82,20 @@ class Obra(models.Model):
     # Uso URLField según la necesidad de usar una URL remota
     imagen_url = models.URLField(
         max_length=500, verbose_name="URL Remota de la Imagen"
+    )
+    
+    # --- Atributos de Exposiciones Históricas ---
+    mostrar_en_exposiciones = models.BooleanField(
+        default=False, 
+        verbose_name="Mostrar en Exposiciones Históricas",
+        help_text="Máximo 6 obras pueden ser mostradas en exposiciones"
+    )
+    año_exposicion = models.CharField(
+        max_length=4, 
+        blank=True, 
+        null=True,
+        verbose_name="Año de Exposición",
+        help_text="Año en que se expuso esta obra (ej: 2023)"
     )
     
     # --- Atributos de Fecha/Hora ---
@@ -95,3 +110,15 @@ class Obra(models.Model):
         
     def __str__(self):
         return self.titulo
+    
+    def clean(self):
+        """Validación personalizada para limitar exposiciones a 6"""
+        from django.core.exceptions import ValidationError
+        if self.estado == 'EXPOSICION':
+            exposiciones_activas = Obra.objects.filter(estado='EXPOSICION')
+            if self.pk:
+                exposiciones_activas = exposiciones_activas.exclude(pk=self.pk)
+            if exposiciones_activas.count() >= 6:
+                raise ValidationError({'estado': 'Ya hay 6 obras en Exposición. Desactiva otra primero.'})
+            if not self.año_exposicion:
+                raise ValidationError({'año_exposicion': 'Debes especificar el año de exposición.'})

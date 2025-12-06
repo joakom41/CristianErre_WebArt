@@ -28,13 +28,19 @@ class ObraAdmin(admin.ModelAdmin):
         # Muestro una lista de los nombres de estilos separados por coma
         return ", ".join([estilo.nombre for estilo in obj.estilos.all()])
     # Doy un nombre de columna legible al método
-    get_estilos.short_description = 'Estilos' 
+    get_estilos.short_description = 'Estilos'
+    
+    # Función para mostrar si está en exposiciones con ícono
+    def en_exposicion(self, obj):
+        return '✓' if obj.mostrar_en_exposiciones else '✗'
+    en_exposicion.short_description = 'En Expo'
+    en_exposicion.boolean = True
     
     # 1. list_display: Campos visibles en la lista (Obligatorio)
-    list_display = ('titulo', 'artista', 'get_estilos', 'estado', 'creado',)
+    list_display = ('titulo', 'artista', 'get_estilos', 'estado', 'en_exposicion', 'año_exposicion', 'creado',)
     
     # 2. list_filter: Filtros laterales (Cumplo con un parámetro clave)
-    list_filter = ('artista', 'estado', 'estilos',)
+    list_filter = ('artista', 'estado', 'estilos', 'mostrar_en_exposiciones',)
     
     # 3. search_fields: Campos donde puedo buscar (barra de búsqueda)
     search_fields = ('titulo', 'descripcion', 'artista__nombre',) 
@@ -51,6 +57,23 @@ class ObraAdmin(admin.ModelAdmin):
     # 7. actions: Acciones personalizadas para cambiar estados masivamente
     actions = [cambiar_a_archivado, cambiar_a_disponible]
     
+    # 8. fieldsets: Organizar campos en el formulario
+    fieldsets = (
+        ('Información Básica', {
+            'fields': ('titulo', 'artista', 'categoria', 'descripcion', 'imagen_url')
+        }),
+        ('Clasificación', {
+            'fields': ('estilos', 'estado')
+        }),
+        ('Exposiciones Históricas', {
+            'fields': ('mostrar_en_exposiciones', 'año_exposicion'),
+            'description': 'Máximo 6 obras pueden ser mostradas en la sección de exposiciones del home.'
+        }),
+        ('Metadatos', {
+            'fields': ('creado', 'actualizado'),
+            'classes': ('collapse',)
+        }),
+    )
     
 # ----------------------------------------------------
 # 2. Registro de Modelos en el Admin

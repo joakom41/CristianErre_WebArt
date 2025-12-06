@@ -22,9 +22,17 @@ def home_view(request):
     
     # Obras recientes disponibles para el catálogo preview (solo 3)
     obras_recientes = Obra.objects.filter(estado='DISPONIBLE').order_by('-creado')[:3]
+    
+    # Exposiciones históricas: Máximo 6 obras con estado EXPO, ordenadas por año descendente
+    exposiciones = Obra.objects.filter(
+        estado='EXPOSICION'
+    ).exclude(
+        estado='ARCHIVADO'
+    ).order_by('-año_exposicion', '-creado')[:6]
 
     context['obras_historicas'] = obras_historicas
     context['obras_recientes'] = obras_recientes
+    context['exposiciones'] = exposiciones
 
     return render(request, 'core/home.html', context)
 
@@ -180,14 +188,19 @@ def admin_obra_create_view(request):
         estado = request.POST.get('estado')
         imagen_url = request.POST.get('imagen_url')
         estilos_ids = request.POST.getlist('estilos')
+        año_exposicion = request.POST.get('año_exposicion') or None
         
-        # Crear obra (sin artista, siempre es Cristian Erre)
+        # Si el estado no es EXPO, limpiar año
+        if estado != 'EXPOSICION':
+            año_exposicion = None
+        
         obra = Obra.objects.create(
             titulo=titulo,
             categoria=categoria,
             descripcion=descripcion,
             estado=estado,
-            imagen_url=imagen_url
+            imagen_url=imagen_url,
+            año_exposicion=año_exposicion
         )
         
         # Agregar estilos
@@ -199,10 +212,12 @@ def admin_obra_create_view(request):
     
     # GET: mostrar formulario
     estilos = Estilo.objects.all()
+    exposiciones_count = Obra.objects.filter(estado='EXPOSICION').count()
     context = {
         'estilos': estilos,
         'categorias': Obra.CATEGORIAS,
         'estados': Obra.ESTADOS,
+        'exposiciones_count': exposiciones_count,
     }
     return render(request, 'core/admin_obra_form.html', context)
 
@@ -219,6 +234,9 @@ def admin_obra_edit_view(request, obra_id):
         obra.descripcion = request.POST.get('descripcion')
         obra.estado = request.POST.get('estado')
         obra.imagen_url = request.POST.get('imagen_url')
+        obra.año_exposicion = request.POST.get('año_exposicion') or None
+        if obra.estado != 'EXPOSICION':
+            obra.año_exposicion = None
         obra.save()
         
         # Actualizar estilos
@@ -231,11 +249,13 @@ def admin_obra_edit_view(request, obra_id):
     
     # GET: mostrar formulario con datos actuales
     estilos = Estilo.objects.all()
+    exposiciones_count = Obra.objects.filter(estado='EXPOSICION').exclude(pk=obra.pk).count()
     context = {
         'obra': obra,
         'estilos': estilos,
         'categorias': Obra.CATEGORIAS,
         'estados': Obra.ESTADOS,
+        'exposiciones_count': exposiciones_count,
         'edit_mode': True,
     }
     return render(request, 'core/admin_obra_form.html', context)

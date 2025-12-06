@@ -14,6 +14,21 @@
     </p>
 </div>
 
+<!-- INFO DE OBRA PRE-CARGADA (Si viene desde un botón de cotización) -->
+{% if obra_nombre %}
+<div class="max-w-2xl mx-auto mb-8 p-6 bg-blue-50 border border-blue-200 rounded-2xl">
+    <div class="flex items-start gap-3">
+        <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div class="flex-1">
+            <h3 class="text-stone-900 font-medium mb-1">Consulta sobre: <span class="text-blue-700">{{ obra_nombre }}</span></h3>
+            <p class="text-stone-600 text-sm">Tu solicitud está asociada a esta obra. Los campos están pre-cargados para facilitarte el proceso.</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <!-- MENSAJES DE ÉXITO -->
 {% if messages %}
 {% for message in messages %}
@@ -39,18 +54,31 @@
 <div class="max-w-2xl mx-auto">
     <div class="bg-white rounded-3xl shadow-soft-xl p-8 lg:p-12">
 
-        <form method="POST" class="space-y-6">
+        <form method="POST" class="space-y-6" novalidate>
             {% csrf_token %}
+
+            <!-- Campo oculto para obra_id -->
+            {% if form.obra_id.value %}
+            <input type="hidden" name="obra_id" value="{{ form.obra_id.value }}">
+            {% endif %}
+            <!-- Campo oculto para obra_nombre -->
+            {% if form.obra_nombre.value %}
+            <input type="hidden" name="obra_nombre" value="{{ form.obra_nombre.value }}">
+            {% endif %}
 
             <!-- Campo Nombre -->
             <div>
                 <label for="id_nombre" class="block text-sm font-medium text-stone-900 mb-2">
                     Nombre completo
                 </label>
-                <input type="text" name="nombre" id="id_nombre" required class="w-full border border-stone-300 rounded-xl px-4 py-3
+                <input type="text" name="nombre" id="id_nombre" required 
+                       value="{{ form.nombre.value|default:'' }}" 
+                       class="w-full border border-stone-300 rounded-xl px-4 py-3
                               focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent
                               transition-all duration-300 text-stone-900 placeholder-stone-400"
-                    placeholder="Tu nombre">
+                       placeholder="Tu nombre completo"
+                       maxlength="100"
+                       autocomplete="name">
                 {% if form.nombre.errors %}
                 <p class="mt-2 text-sm text-rose-600">{{ form.nombre.errors.0 }}</p>
                 {% endif %}
@@ -61,28 +89,36 @@
                 <label for="id_email" class="block text-sm font-medium text-stone-900 mb-2">
                     Correo electrónico
                 </label>
-                <input type="email" name="email" id="id_email" required class="w-full border border-stone-300 rounded-xl px-4 py-3
+                <input type="email" name="email" id="id_email" required 
+                       value="{{ form.email.value|default:'' }}" 
+                       class="w-full border border-stone-300 rounded-xl px-4 py-3
                               focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent
                               transition-all duration-300 text-stone-900 placeholder-stone-400"
-                    placeholder="tu@email.com">
+                       placeholder="tu@email.com"
+                       autocomplete="email">
                 {% if form.email.errors %}
                 <p class="mt-2 text-sm text-rose-600">{{ form.email.errors.0 }}</p>
                 {% endif %}
             </div>
 
-            <!-- Campo Asunto -->
+            <!-- Campo Asunto (Pre-cargado si viene de un botón) -->
             <div>
                 <label for="id_asunto" class="block text-sm font-medium text-stone-900 mb-2">
-                    Asunto
+                    Tipo de Consulta
                 </label>
-                <select name="asunto" id="id_asunto" required class="w-full border border-stone-300 rounded-xl px-4 py-3
+                <select name="asunto" id="id_asunto" required 
+                        class="w-full border border-stone-300 rounded-xl px-4 py-3
                                focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent
-                               transition-all duration-300 text-stone-900 bg-white">
-                    <option value="">Selecciona un asunto</option>
-                    <option value="CONSULTA">Consulta General</option>
-                    <option value="ENCARGO">Encargo de Obra</option>
-                    <option value="MURAL">Cotización de Mural</option>
-                    <option value="OTRO">Otro</option>
+                               transition-all duration-300 text-stone-900 bg-white"
+                        aria-label="Tipo de consulta">
+                    <option value="">-- Selecciona un tipo de consulta --</option>
+                    {% for value, label in form.fields.asunto.choices %}
+                        {% if value %}
+                        <option value="{{ value }}" {% if form.asunto.value == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endif %}
+                    {% endfor %}
                 </select>
                 {% if form.asunto.errors %}
                 <p class="mt-2 text-sm text-rose-600">{{ form.asunto.errors.0 }}</p>
@@ -93,25 +129,51 @@
             <div>
                 <label for="id_mensaje" class="block text-sm font-medium text-stone-900 mb-2">
                     Mensaje
+                    <span class="text-stone-500 text-xs">(mínimo 10 caracteres)</span>
                 </label>
-                <textarea name="mensaje" id="id_mensaje" rows="6" required class="w-full border border-stone-300 rounded-xl px-4 py-3
+                <textarea name="mensaje" id="id_mensaje" rows="6" required 
+                          class="w-full border border-stone-300 rounded-xl px-4 py-3
                                  focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent
                                  transition-all duration-300 text-stone-900 placeholder-stone-400 resize-none"
-                    placeholder="Cuéntanos sobre tu proyecto o consulta..."></textarea>
+                          placeholder="Cuéntanos sobre tu proyecto o consulta..."
+                          minlength="10"
+                          maxlength="5000">{{ form.mensaje.value|default:'' }}</textarea>
+                <p class="text-xs text-stone-500 mt-1">
+                    <span id="charCount">0</span>/5000 caracteres
+                </p>
                 {% if form.mensaje.errors %}
                 <p class="mt-2 text-sm text-rose-600">{{ form.mensaje.errors.0 }}</p>
                 {% endif %}
             </div>
 
             <!-- Botón de envío -->
-            <button type="submit" class="w-full bg-stone-900 text-white py-4 rounded-full font-medium text-base
-                           hover:bg-stone-800 hover:scale-[1.02] hover:shadow-xl
-                           transition-all duration-300 shadow-lg">
+            <button type="submit" 
+                    class="w-full bg-stone-900 text-white py-4 rounded-full font-medium text-base
+                           hover:bg-stone-800 active:bg-stone-950 hover:scale-[1.02] hover:shadow-xl
+                           transition-all duration-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-stone-400"
+                    aria-label="Enviar solicitud">
                 Enviar Solicitud
             </button>
         </form>
 
     </div>
 </div>
+
+<!-- Script para contador de caracteres -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.getElementById('id_mensaje');
+    const charCount = document.getElementById('charCount');
+    
+    if (textarea && charCount) {
+        textarea.addEventListener('input', function() {
+            charCount.textContent = this.value.length;
+        });
+        
+        // Inicializar contador
+        charCount.textContent = textarea.value.length;
+    }
+});
+</script>
 
 {% endblock %}

@@ -45,20 +45,67 @@ def bio_view(request):
 
 # VISTA CONTACTO
 def contacto_view(request):
+    # Inicializar variables que siempre se necesitan en el contexto
+    obra_nombre = None
+    tipo_consulta = None
+    obra_id = None
+    
     if request.method == 'POST':
         form = ContactoForm(request.POST)
         if form.is_valid():
-            form.save()
+            # Procesar y guardar el mensaje
+            contacto = form.save(commit=False)
+            
+            # Si viene obra_id y obra_nombre, guardarlos
+            obra_id = request.POST.get('obra_id')
+            if obra_id:
+                try:
+                    contacto.obra_id = int(obra_id)
+                except (ValueError, TypeError):
+                    pass
+            # Guardar nombre de la obra si viene
+            obra_nombre_post = request.POST.get('obra_nombre')
+            if obra_nombre_post:
+                contacto.obra_nombre = obra_nombre_post
+            
+            contacto.save()
+            
             messages.success(
                 request,
                 f'¡Gracias {form.cleaned_data["nombre"]}! Su mensaje ha sido enviado con éxito.'
             )
             return redirect('/contacto/')
+        else:
+            # Si el formulario tiene errores, recuperar los datos de obra del POST
+            obra_nombre = request.POST.get('obra_nombre')
+            tipo_consulta = request.POST.get('asunto')
+            obra_id = request.POST.get('obra_id')
     else:
-        form = ContactoForm()
+        # Capturar parámetros GET para pre-llenar el formulario
+        initial_data = {}
+        
+        # Parámetro: obra_nombre (para mostrar al usuario)
+        obra_nombre = request.GET.get('obra_nombre')
+        if obra_nombre:
+            initial_data['obra_nombre'] = obra_nombre
+        
+        # Parámetro: tipo (para pre-seleccionar el asunto)
+        tipo_consulta = request.GET.get('tipo')
+        if tipo_consulta:
+            initial_data['asunto'] = tipo_consulta
+        
+        # Parámetro: obra_id (para referencia interna)
+        obra_id = request.GET.get('obra_id')
+        if obra_id:
+            initial_data['obra_id'] = obra_id
+        
+        form = ContactoForm(initial=initial_data)
 
     context = get_carousel_context()
     context['form'] = form
+    context['obra_nombre'] = obra_nombre
+    context['tipo_consulta'] = tipo_consulta
+    context['obra_id'] = obra_id
     return render(request, 'core/contacto.html', context)
 
 
@@ -172,9 +219,25 @@ def admin_panel_view(request):
 
 @admin_required
 def admin_obras_view(request):
-    """Lista de todas las obras para gestión"""
+    """Lista de todas las obras para gestión con filtro por estado"""
+    # Obtener el filtro de estado desde GET
+    estado_filtro = request.GET.get('estado', '')
+    
+    # Iniciar con todas las obras
     obras = Obra.objects.all().select_related('artista').prefetch_related('estilos')
-    context = {'obras': obras}
+    
+    # Aplicar filtro de estado si existe
+    if estado_filtro:
+        obras = obras.filter(estado=estado_filtro)
+    
+    # Ordenar por fecha de creación (más recientes primero)
+    obras = obras.order_by('-creado')
+    
+    context = {
+        'obras': obras,
+        'estado_filtro': estado_filtro,
+        'estados': Obra.ESTADOS,  # Pasar las opciones de estado al template
+    }
     return render(request, 'core/admin_obras.html', context)
 
 

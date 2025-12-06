@@ -18,6 +18,29 @@
             </a>
         </div>
 
+        <!-- Filtro por Estado -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <form method="GET" class="flex items-center gap-4">
+                <label class="text-sm font-medium text-stone-700">Filtrar por estado:</label>
+                <select name="estado" 
+                        onchange="this.form.submit()"
+                        class="px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-stone-400 focus:border-transparent outline-none transition">
+                    <option value="">Todos los estados</option>
+                    {% for valor, nombre in estados %}
+                    <option value="{{ valor }}" {% if estado_filtro == valor %}selected{% endif %}>
+                        {{ nombre }}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% if estado_filtro %}
+                <a href="{% url 'admin_obras' %}" 
+                   class="text-sm text-stone-600 hover:text-stone-900 underline">
+                    Limpiar filtro
+                </a>
+                {% endif %}
+            </form>
+        </div>
+
         <!-- Tabla de Obras -->
         <div class="bg-white rounded-2xl shadow-soft overflow-hidden">
             <table class="w-full">

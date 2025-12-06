@@ -17,6 +17,25 @@
         <!-- Contenido del mensaje -->
         <div class="bg-white rounded-2xl shadow-soft p-8 space-y-6">
 
+            <!-- Información de la obra asociada (si aplica) -->
+            {% if mensaje.obra_id or mensaje.obra_nombre %}
+            <div class="border-b border-stone-200 pb-6">
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="px-3 py-1 rounded-full bg-blue-50 text-blue-800 text-sm font-medium">
+                        Consulta sobre una obra
+                    </div>
+                    {% if mensaje.obra_nombre %}
+                    <div class="text-stone-900 font-semibold">
+                        {{ mensaje.obra_nombre }}
+                    </div>
+                    {% endif %}
+                    {% if mensaje.obra_id %}
+                    <div class="text-xs text-stone-500">ID: {{ mensaje.obra_id }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
             <!-- Información del remitente -->
             <div class="border-b border-stone-200 pb-6">
                 <div class="grid md:grid-cols-2 gap-4">

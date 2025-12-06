@@ -1,0 +1,18 @@
+{% extends "admin/delete_confirmation.html" %}
+
+{% block content %}
+{{ block.super }}
+
+<div class="warning-box" style="background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 15px; margin: 20px 0; color: #856404;">
+    <h3 style="margin-top: 0; color: #ff6b6b;">⚠️ Recomendación</h3>
+    <p><strong>En lugar de eliminar permanentemente, considera archivar esta obra.</strong></p>
+    <p>Las obras archivadas:</p>
+    <ul style="margin: 10px 0;">
+        <li>Se mantienen en la base de datos de forma segura</li>
+        <li>No aparecen en el catálogo público</li>
+        <li>Pueden recuperarse fácilmente en cualquier momento</li>
+        <li>Preservan el historial completo de la obra</li>
+    </ul>
+    <p><strong>Para archivar:</strong> Edita la obra y cambia su estado a "Archivado" en lugar de eliminarla.</p>
+</div>
+{% endblock %}

@@ -7,8 +7,8 @@ def lista_obras(request):
     Mi vista principal que muestra la lista de obras con paginación y filtrado.
     """
     
-    # 1. Iniciar con todas las obras
-    obras_list = Obra.objects.all()
+    # 1. Iniciar con todas las obras que NO estén archivadas
+    obras_list = Obra.objects.exclude(estado='ARCHIVADO')
     
     # -----------------------------------------------------------
     # 2. FILTRO 1: Lógica de Filtrado por Estilo (Parámetro 'estilo')

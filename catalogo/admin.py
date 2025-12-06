@@ -2,6 +2,23 @@ from django.contrib import admin
 # Importo todos los modelos que necesito registrar
 from .models import Artista, Estilo, Obra
 
+# Función auxiliar para cambiar estado masivamente
+def cambiar_a_archivado(modeladmin, request, queryset):
+    """Action para archivar múltiples obras a la vez"""
+    updated = queryset.update(estado='ARCHIVADO')
+    modeladmin.message_user(request, f'{updated} obra(s) archivada(s) correctamente.')
+
+cambiar_a_archivado.short_description = 'Archivar obras seleccionadas'
+
+
+def cambiar_a_disponible(modeladmin, request, queryset):
+    """Action para cambiar obras archivadas a disponibles"""
+    updated = queryset.update(estado='DISPONIBLE')
+    modeladmin.message_user(request, f'{updated} obra(s) marcada(s) como disponibles.')
+
+cambiar_a_disponible.short_description = 'Marcar como disponible'
+
+
 # ----------------------------------------------------
 # 1. Administración del Modelo OBRA (Personalización de 6 Parámetros)
 # ----------------------------------------------------
@@ -29,7 +46,11 @@ class ObraAdmin(admin.ModelAdmin):
     readonly_fields = ('creado', 'actualizado',)
     
     # 6. filter_horizontal: Widget mejorado para ManyToManyField
-    filter_horizontal = ('estilos',) 
+    filter_horizontal = ('estilos',)
+    
+    # 7. actions: Acciones personalizadas para cambiar estados masivamente
+    actions = [cambiar_a_archivado, cambiar_a_disponible]
+    
     
 # ----------------------------------------------------
 # 2. Registro de Modelos en el Admin

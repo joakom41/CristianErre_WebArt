@@ -72,6 +72,7 @@ class Obra(models.Model):
         ('DISPONIBLE', 'Disponible para Venta'),
         ('VENDIDO', 'Vendido'),
         ('COTI', 'Sólo Cotización'),
+        ('ARCHIVADO', 'Archivado'),
     )
     estado = models.CharField(
         max_length=20, choices=ESTADOS, default='DISPONIBLE', verbose_name="Estado de Venta"

@@ -110,9 +110,22 @@ class ContactoForm(forms.ModelForm):
             )
         )
 
+    def clean_nombre(self):
+        """Valida el nombre: sin solo espacios y con longitud minima."""
+        nombre = (self.cleaned_data.get('nombre') or '').strip()
+
+        if len(nombre) < 2:
+            raise forms.ValidationError("El nombre debe tener al menos 2 caracteres.")
+
+        # Evitar nombres con solo numeros o simbolos
+        if all(not c.isalpha() for c in nombre):
+            raise forms.ValidationError("Incluye letras en el nombre, por favor.")
+
+        return nombre
+
     def clean_email(self):
         """Valida que el email sea único en un período de tiempo."""
-        email = self.cleaned_data.get('email')
+        email = (self.cleaned_data.get('email') or '').strip().lower()
         
         if email:
             # Verificar si hay demasiados mensajes del mismo email en las últimas 24 horas
@@ -132,6 +145,21 @@ class ContactoForm(forms.ModelForm):
                 )
         
         return email
+
+    def clean_asunto(self):
+        """Valida que el asunto sea una opción válida del modelo."""
+        asunto = self.cleaned_data.get('asunto')
+
+        # Opciones disponibles en el modelo (lista de tuplas)
+        valid_values = {choice[0] for choice in Contacto._meta.get_field('asunto').choices if choice[0]}
+
+        if asunto and asunto not in valid_values:
+            raise forms.ValidationError("Selecciona un tipo de consulta válido.")
+
+        if not asunto:
+            raise forms.ValidationError("Selecciona un tipo de consulta.")
+
+        return asunto
 
     def clean_mensaje(self):
         """Valida que el mensaje tenga contenido útil."""

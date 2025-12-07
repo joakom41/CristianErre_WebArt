@@ -1,12 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.admin.views.decorators import staff_member_required
+"""Vistas de dossier accesibles para todos los usuarios."""
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from .forms import DossierForm
 from .models import Dossier, DossierObra
 from catalogo.models import Obra
 
-@staff_member_required
 def crear_dossier(request):
     """Vista para crear y generar el dossier"""
     if request.method == 'POST':
@@ -47,7 +46,6 @@ def crear_dossier(request):
     })
 
 
-@staff_member_required
 def generar_pdf(request, dossier_id):
     """Genera el PDF del dossier o descarga HTML si WeasyPrint no está disponible"""
     dossier = get_object_or_404(Dossier, id=dossier_id)

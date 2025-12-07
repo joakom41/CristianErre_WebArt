@@ -8,11 +8,35 @@ from catalogo.models import Obra
 
 def crear_dossier(request):
     """Vista para crear y generar el dossier"""
+    es_staff = request.user.is_authenticated and request.user.is_staff
+
+    # Datos bloqueados del artista para usuarios no staff/no registrados
+    artista_nombre = 'Cristian Erre'
+    artista_bio = (
+        'Cristian Erre es un artista visual con una década de trayectoria, reconocido por su versatilidad al moverse '
+        'entre el óleo clásico y la ilustración digital contemporánea. Su trabajo explora temas de identidad urbana '
+        'y fragmentación del paisaje. Graduado de la Academia de Bellas Artes, Cristian ha expuesto en galerías de '
+        'Santiago y Valparaíso. En los últimos años, su enfoque en el muralismo ha ganado notoriedad, buscando llevar '
+        'el arte a gran escala a espacios públicos y privados.'
+    )
+    artista_foto = 'https://i.imgur.com/unFLwMZ.png'
+
     if request.method == 'POST':
-        form = DossierForm(request.POST)
+        post_data = request.POST.copy()
+        if not es_staff:
+            post_data['nombre_artista'] = artista_nombre
+            post_data['bio_artista'] = artista_bio
+            post_data['foto_artista_url'] = artista_foto
+        form = DossierForm(post_data)
         if form.is_valid():
-            # Crear el dossier
-            dossier = form.save()
+            dossier = form.save(commit=False)
+            # Forzar datos del artista para usuarios no staff/no registrados
+            if not es_staff:
+                dossier.nombre_artista = artista_nombre
+                dossier.bio_artista = artista_bio
+                dossier.foto_artista_url = artista_foto
+
+            dossier.save()
             
             # Procesar obras seleccionadas
             obras_ids = []
@@ -39,10 +63,22 @@ def crear_dossier(request):
             return generar_pdf(request, dossier.id)
     else:
         form = DossierForm()
+        if not es_staff:
+            # Precargar y bloquear campos del artista para vista
+            form.fields['nombre_artista'].initial = artista_nombre
+            form.fields['bio_artista'].initial = artista_bio
+            form.fields['foto_artista_url'].initial = artista_foto
+            form.fields['nombre_artista'].widget.attrs['readonly'] = True
+            form.fields['bio_artista'].widget.attrs['readonly'] = True
+            form.fields['foto_artista_url'].widget.attrs['readonly'] = True
+            form.fields['nombre_artista'].widget.attrs['class'] = form.fields['nombre_artista'].widget.attrs.get('class', '') + ' bg-stone-100'
+            form.fields['bio_artista'].widget.attrs['class'] = form.fields['bio_artista'].widget.attrs.get('class', '') + ' bg-stone-100'
+            form.fields['foto_artista_url'].widget.attrs['class'] = form.fields['foto_artista_url'].widget.attrs.get('class', '') + ' bg-stone-100'
     
     return render(request, 'dossier/crear_dossier.html', {
         'form': form,
-        'max_obras': 20
+        'max_obras': 20,
+        'es_staff': es_staff
     })
 
 
@@ -88,3 +124,56 @@ def generar_pdf(request, dossier_id):
         
         response = HttpResponse(html_with_notice, content_type='text/html')
         return response
+
+# --- VISTA SOLO LECTURA PARA USUARIOS NO STAFF ---
+def dossier_artista_readonly(request):
+    if request.user.is_staff:
+        return redirect('crear_dossier')  # Redirige a la vista normal si es staff
+    contexto = {
+        'nombre': 'Cristian Erre',
+        'foto_url': 'https://i.imgur.com/unFLwMZ.png',
+        'bio_parrafos': [
+            'Cristian Erre es un artista visual con una década de trayectoria, reconocido por su versatilidad al moverse entre el óleo clásico y la ilustración digital contemporánea. Su trabajo explora temas de identidad urbana y fragmentación del paisaje.',
+            'Graduado de la Academia de Bellas Artes, Cristian ha expuesto en galerías de Santiago y Valparaíso. En los últimos años, su enfoque en el muralismo ha ganado notoriedad, buscando llevar el arte a gran escala a espacios públicos y privados.'
+        ]
+    }
+    return render(request, 'dossier/dossier_artista_readonly.html', contexto)
+
+def dossier_artista_pdf(request):
+    if request.user.is_staff:
+        return redirect('crear_dossier')
+    contexto = {
+        'nombre': 'Cristian Erre',
+        'foto_url': 'https://i.imgur.com/unFLwMZ.png',
+        'bio_parrafos': [
+            'Cristian Erre es un artista visual con una década de trayectoria, reconocido por su versatilidad al moverse entre el óleo clásico y la ilustración digital contemporánea. Su trabajo explora temas de identidad urbana y fragmentación del paisaje.',
+            'Graduado de la Academia de Bellas Artes, Cristian ha expuesto en galerías de Santiago y Valparaíso. En los últimos años, su enfoque en el muralismo ha ganado notoriedad, buscando llevar el arte a gran escala a espacios públicos y privados.'
+        ]
+    }
+    return render(request, 'dossier/dossier_artista_pdf.html', contexto)
+
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt
+def generar_pdf_bloqueado(request):
+    if request.method == 'POST' and not request.user.is_staff:
+        from django.template.loader import render_to_string
+        html_string = render_to_string('dossier/dossier_artista_pdf.html', {
+            'nombre': 'Cristian Erre',
+            'foto_url': 'https://i.imgur.com/unFLwMZ.png',
+            'bio_parrafos': [
+                'Cristian Erre es un artista visual con una década de trayectoria, reconocido por su versatilidad al moverse entre el óleo clásico y la ilustración digital contemporánea. Su trabajo explora temas de identidad urbana y fragmentación del paisaje.',
+                'Graduado de la Academia de Bellas Artes, Cristian ha expuesto en galerías de Santiago y Valparaíso. En los últimos años, su enfoque en el muralismo ha ganado notoriedad, buscando llevar el arte a gran escala a espacios públicos y privados.'
+            ]
+        })
+        try:
+            from weasyprint import HTML
+            html = HTML(string=html_string)
+            pdf_file = html.write_pdf()
+            response = HttpResponse(pdf_file, content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="dossier_Cristian_Erre.pdf"'
+            return response
+        except (ImportError, OSError):
+            response = HttpResponse(html_string, content_type='text/html')
+            response['Content-Disposition'] = 'inline; filename="dossier_Cristian_Erre.html"'
+            return response
+    return redirect('dossier:dossier_artista_pdf')

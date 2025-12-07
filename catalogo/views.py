@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
+from django.utils.safestring import mark_safe
+import json
 from .models import Obra, Artista # Importo mis modelos
 
 def lista_obras(request):
@@ -43,12 +45,30 @@ def lista_obras(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    # 7. Contexto
+    # 7. Construir datos JSON seguro para JavaScript
+    obras_data = {}
+    for obra in page_obj:
+        estilos_list = ', '.join([estilo.nombre for estilo in obra.estilos.all()])
+        obras_data[str(obra.id)] = {
+            'titulo': obra.titulo,
+            'artista': obra.artista.nombre if obra.artista else 'Sin artista',
+            'categoria': obra.get_categoria_display(),
+            'estilos': estilos_list,
+            'estado': obra.estado,
+            'estadoDisplay': obra.get_estado_display(),
+            'descripcion': obra.descripcion,
+            'imagen': obra.imagen_url
+        }
+    
+    obras_json = mark_safe(json.dumps(obras_data))
+    
+    # 8. Contexto
     context = {
         'page_obj': page_obj,
         'artista_seleccionado': artista_id,             
         'estilo_seleccionado': estilo_nombre,
         'estado_seleccionado': estado,
+        'obras_json': obras_json,
     }
     # No necesitamos incluir artistas ni estilos aquí porque ya vienen del context processor
     

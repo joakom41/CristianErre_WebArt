@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+{% block title %}Dossier PDF | Cristian Erre{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto mt-10 p-8 bg-white rounded-3xl shadow-lg">
+    <div class="flex flex-col items-center gap-6">
+        <img src="{{ foto_url }}" alt="Retrato de {{ nombre }}" class="w-48 aspect-square object-cover rounded-3xl shadow-soft-lg">
+        <h2 class="text-3xl font-display font-bold text-stone-900">{{ nombre }}</h2>
+        <div class="space-y-4 text-stone-700 leading-relaxed text-center">
+            {% for parrafo in bio_parrafos %}
+                <p class="text-base lg:text-lg">{{ parrafo }}</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="mt-8 text-center">
+        <form method="post" action="{% url 'dossier:generar_pdf_bloqueado' %}">
+            {% csrf_token %}
+            <button type="submit" class="px-6 py-3 bg-stone-900 text-white rounded-full hover:bg-stone-800 transition-all duration-300 shadow-lg font-medium text-sm">Generar PDF</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
